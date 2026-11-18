@@ -33,7 +33,7 @@ Learn the platform by using it, before writing more phone code.
 Prove the hook switch, handset audio, ringer and Pi Zero 2 W with the code already in this repo, where voice goes through LiveKit. LiveKit and the ringing server are only for testing the hardware. M2 replaces both.
 
 * Done so far: the software, tests, and a Docker setup that runs the whole call on a laptop with a mock phone.
-* Left: the parts arrive after 24 Nov. Build phone 1 ([docs/pi-setup.md](docs/pi-setup.md)), measure the Zero's memory and CPU, and tune handset levels.
+* Left: the parts arrive after 24 Nov. Build phone 1 as a bench phone ([docs/pi-setup.md](docs/pi-setup.md)), measure the Zero's memory and CPU, and tune handset levels. Then open up one new retro-style phone (see [Build a phone](README.md#build-a-phone)) and fit the Pi inside, using its handset, hook switch and ringer.
 
 **Done when:** a real Pi phone in a box rings a laptop when its handset is lifted, the laptop can ring it back, and both sides hear each other clearly for 5 minutes.
 
@@ -56,7 +56,7 @@ Build phone 2.
 * A household is created by its owner's Homephone account in the Product. The owner adds people (their Homephone accounts) and devices (paired Pis). Calling a household rings every device and member at once, and the first pickup wins.
 * **Only people you're connected to in the Polkadot App, and have approved, can ring your house.** You invite them with a one-time link sent in the App chat; they join from Homephone; you approve. Every device keeps the allowlist and silently drops rings from anyone else ([how it works](docs/polkadot.md#who-can-ring-your-home)).
 * Display names come from Polkadot usernames when people allow it, for example "alicia.07's house".
-* Missed-call light and do-not-disturb, if wanted. Keypad or one button per household.
+* Dial a household with the phone's own dial: count rotary pulses, or read the push buttons behind the dial plate. Speed-dial digits map to households (1 = Grandma's house). Missed-call light and do-not-disturb, if wanted.
 
 **Done when:** a contact you invited through the App chat and approved can ring your house; calling rings both phones and the members' Apps, and picking up on one silences the rest; and a Polkadot account you haven't approved can't make anything ring.
 
@@ -87,7 +87,7 @@ An open-source SD-card image built on Raspberry Pi OS Lite. A new phone needs no
 ## Later
 
 * **Mainnet.** Move from `devnet` to Polkadot when the production network opens to Products.
-* **Vintage shell.** Move a proven phone into a thrifted 1970s–80s desk phone, swap the carbon microphone, and ring its real bell with a solenoid (build C in the README).
+* **Vintage phones.** Real 1970s–80s phones as well as new retro-style ones: new microphone, and a solenoid striking the real bell.
 * **Group calls.** Three or more people at once needs a media server (an SFU), only for conference calls.
 * **Community TURN.** Households with a public address relay for their family.
 * **JAM.** Move to Polkadot's JAM when it is ready.
@@ -101,4 +101,4 @@ The Polkadot-side questions, with how to answer each, are in [docs/polkadot.md](
 
 * aiortc on the Pi Zero 2 W: enough CPU and memory alongside the Node sidecar? (M1, M2)
 * Is echo cancellation needed with a handset? (M1)
-* Rotary dial, keypad, or one button per household? (M3)
+* Which new retro-style phone to standardise on: dial type, ringer and room inside? (M1)

@@ -1,34 +1,93 @@
 # Homephone
 
-A landline for the internet age: a Raspberry Pi home phone that rings the whole household, built on WebRTC and Polkadot.
+A homephone for the internet age: a Raspberry Pi inside a classic telephone that rings the whole household, built on Polkadot.
 
-Call a household, not a person. Every phone in that home rings at once, and whoever is nearest picks up, just like the old family landline. Households join a family group. Each member's housephone or smartphone app can ring any other household in the group. There is no phone network involved: calls go over the internet with WebRTC (through [LiveKit](https://livekit.io)), and each device has its own Polkadot account.
+Call a household, not a person. Your family rings your home from the Polkadot App on their phones, every phone in the house rings at once, and whoever is nearest picks up, just like the old family landline. Only people you're connected to in the Polkadot App, and have approved, can make it ring. There is no phone network and no Homephone server in the call: Polkadot carries identity, contacts and ringing, and the voice goes directly between the two ends.
 
-**Status:** milestone 1, one Pi phone calls a laptop. See [ROADMAP.md](ROADMAP.md) for the milestones and the plan after that.
+**Status:** testnet only and early. The design is set (below and in [docs/polkadot.md](docs/polkadot.md)). The code in this repo today is the milestone 1 hardware harness, which proves the phone hardware with a temporary server. See [ROADMAP.md](ROADMAP.md).
 
 ## How it works
 
 ```
-  Pi phone                     Ringing server                   Laptop / app
-  (handset, hook, ringer)      (this repo, FastAPI)             (browser page)
-        |                               |                              |
-        |-- hello, signed with -------->|<------- hello (test key) ----|
-        |   its Polkadot key            |                              |
-        |-- lift handset: "call laptop"->|-- ring every device in ---->|
-        |                               |   the "laptop" household     |
-        |<-- "answered" ----------------|<------- "answer" ------------|
-        |                                                              |
-        |<============ voice: WebRTC through LiveKit =================>|
+  Polkadot App (your phone)                              Homephone (Pi in a classic telephone)
+  ┌─────────────────────────────┐                        ┌──────────────────────────────────┐
+  │ homephone.dot (a Product):  │    pair once (QR)      │ paired with its owner's account  │
+  │  set up your home, invite   │───────────────────────►│ handset, hook, dial, bell        │
+  │  contacts, call, answer     │                        │                                  │
+  └──────────────┬──────────────┘                        └────────────────┬─────────────────┘
+                 │   ring / answer: signed, encrypted messages             │
+                 └────────────► Polkadot Statement Store ◄────────────────┘
+                 ◄═════════ voice: WebRTC, device to device (relay only if needed) ═════════►
 ```
 
-* **The phone** (`src/homephone/phone`) is a Python program for 64-bit Raspberry Pi OS Lite. It watches a hook switch on a GPIO pin, plays a bell on a USB speaker, and carries the call on a USB sound card wired to a handset. In milestone 1, lifting the handset rings one household (a hotline), so no keypad is needed.
-* **The ringing server** (`src/homephone/server`) knows which device belongs to which household, rings all of a household's devices at once, stops the others when one answers, and hands out LiveKit tokens. The LiveKit secret stays on the server.
-* **The laptop test phone** (`src/homephone/web`) is a single web page served by the ringing server. It can call and answer, and it can lift and hang up mock phones.
-* **Polkadot**: every device creates an sr25519 account on first start (`homephone-identity`) and signs in with it. The goal is a Polkadot housephone: family members call it from the Polkadot App. Start with [docs/polkadot.md](docs/polkadot.md) and [ROADMAP.md](ROADMAP.md).
+* **The Polkadot App is the app.** Homephone runs inside it as a Polkadot Product, `homephone.dot`. That's where you create your home, pair a phone, invite people and make calls. Your keys stay in the App.
+* **The housephone extends your Polkadot account.** A Pi in an old (or old-looking) telephone pairs with your Polkadot App once, then rings and answers on its own.
+* **Ringing goes over Polkadot.** Ring, answer and hang-up are small signed and encrypted messages on Polkadot's Statement Store.
+* **Only approved contacts can ring your home.** You invite a Polkadot App contact with a link sent in the App chat, they join, and you approve them. Every phone in the house ignores anyone else. [How it works](docs/polkadot.md#who-can-ring-your-home).
+* **Voice goes directly between the two ends** over WebRTC: housephone to housephone, or housephone to the App. A relay is used only when two home networks can't reach each other. Audio never goes through a blockchain.
+
+The full design, including what's still provisional on Polkadot's side, is in [docs/polkadot.md](docs/polkadot.md). The voice stack and the alternatives we ruled out are in [docs/calling-stack.md](docs/calling-stack.md).
+
+## Build a phone
+
+Every Homephone is the same small computer inside a telephone you'd want on your hall table: either **a new retro-style phone** or **a real vintage phone**. We keep the handset, hook switch, dial and bell, and replace the phone's own circuit board. It's solder-free where possible: plugs, jumper wires and screw terminals.
+
+Step-by-step setup is in [docs/pi-setup.md](docs/pi-setup.md). The earlier hardware research is in the [hardware doc](https://claude.ai/artifact/A4RnHeqZ5cmp7YKUXtfBv7).
+
+Prices are euros including VAT from Dutch and German shops, checked 18 Nov 2026 where a shop is named. A ~ marks an estimate.
+
+### The core: same in every phone, ~€55
+
+| Part | Job | Where | € |
+|---|---|---|---|
+| Raspberry Pi Zero 2 WH (header pre-soldered) | The computer | BerryBase (€20.90) or Kiwi | 21 |
+| Micro-USB power supply 2.5A, EU plug | Power | Kiwi | 8.50 |
+| 32GB microSD card | Holds the OS | ~any shop | ~6 |
+| Micro-USB OTG hub | The Zero has one USB port; the sound card and ringer need two | ~Amazon.nl | ~8 |
+| Adafruit USB Audio Adapter (#1475) | The handset's earpiece and microphone | Kiwi | 3.60 |
+| 2 × 3.5mm plug to screw-terminal adapter | Wires the handset cord to the sound card | ~Amazon.nl | ~8 |
+| **Core** | | | **~55** |
+| Jumper wires, Wago 221 lever connectors, small screwdrivers | Shared, once | ~Amazon.nl | ~40 |
+
+### Pick a phone
+
+| Phone | What you get | Add to the core |
+|---|---|---|
+| **A. New retro-style phone** (recommended to start) | A new "vintage" phone, like the classic designs sold by the hundred on Alibaba or in shops. Working parts, consistent between units, easy to buy twice. | **~€20 to ~€60** for the phone, plus a ringer (below) |
+| **B. Real vintage phone** | A thrifted 1970s–80s desk phone. The real thing, but every one is different. | **~€25 to ~€60** for the phone, **~€10 to ~€20** for a new microphone, plus a ringer |
+| **Bench phone** (for development) | A plain box with a retro handset and a magnet switch, for writing code before cutting into a real phone. | ~€30: box, handset, reed switch |
+
+**Ringer:** either a small USB speaker hidden inside the phone (Adafruit Mini USB Speaker #3369, €20.25 at Opencircuit), or, for a phone with a real bell, a 12V solenoid that strikes it (Adafruit MOSFET driver #5648, solenoid #412, 12V adapter, ~€23). An old bell needs 40–90V AC to ring by itself; tapping it with a solenoid avoids that.
+
+**A homephone costs about €95–€160**, depending on the phone and ringer. Two come to about €230–€360 including the shared tools. Members without a housephone just use the Polkadot App, for €0.
+
+### Choosing a new retro-style phone
+
+They look alike, but check these before buying, and buy **one** to open up first. On Alibaba, minimum orders, shipping and import fees can outweigh the low unit price for a couple of phones. Prices seen at retailers in Nov 2026 were roughly $20–40 for budget models and about $70 for the GPO 746, which has a real rotary dial and bell.
+
+| Check | Why |
+|---|---|
+| **Not "decorative" or "non-functional"** | Those have no working handset or hook switch inside. |
+| **Rotary dial or push buttons?** | Both work. A real rotary dial sends pulses we count on one GPIO pin. Many "rotary" phones hide push buttons behind a dial-shaped plate; those need a keypad wired to several GPIO pins. Dialing isn't built yet (milestone 1 is "lift the handset to ring one home"). |
+| **Bell or electronic ringer?** | A mechanical bell takes the solenoid ringer. An electronic buzzer is usually replaced by the USB speaker. |
+| **Handset microphone** | Modern phones normally use an electret microphone, which the USB sound card can read directly. Check this on the first unit. Old carbon microphones (phone B) need replacing. |
+| **Room inside** | The Pi Zero, hub and sound card need roughly 8 × 5 × 3 cm, plus the power cable through the old line-cord hole. |
+
+### Which Pi?
+
+The Pi Zero 2 W (512MB) is the default. It should be enough for a voice call, but that hasn't been measured yet; milestone 1 will tell. If it's too small, a Pi 4 or Pi 5 drops in (about €20–60 more, and no USB hub needed). Everything else carries over.
+
+## What's in this repo today (milestone 1)
+
+Milestone 1 proves the phone hardware: hook switch, handset audio, ringer, and the Pi Zero. To test that before the Polkadot pieces exist, it uses a **temporary** ringing server and [LiveKit](https://livekit.io) for voice. Both are removed in milestone 2, when ringing moves to Polkadot ([ROADMAP.md](ROADMAP.md)).
+
+* **The phone** (`src/homephone/phone`) is a Python program for 64-bit Raspberry Pi OS Lite. It watches the hook switch on a GPIO pin, rings the ringer, and carries the call on the USB sound card. Lifting the handset rings one household (a hotline), so no dial is needed yet. This program stays. In milestone 2 it gets direct WebRTC and talks to a small Polkadot sidecar.
+* **Device identity** (`src/homephone/identity.py`): every phone creates its own Polkadot sr25519 key on first start (`homephone-identity`).
+* **The ringing server** (`src/homephone/server`) and **laptop test page** (`src/homephone/web`) are temporary, for testing only.
 
 More detail: [docs/architecture.md](docs/architecture.md).
 
-## Try it on your laptop (no Pi, no accounts)
+### Try it on your laptop (no Pi, no accounts)
 
 You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine on Linux). This runs a local LiveKit server, the ringing server, and a pretend Pi phone whose microphone sends short beeps.
 
@@ -42,106 +101,39 @@ Then open **http://localhost:8080/?key=letmein&household=laptop** and click **St
 
 * **Call the Pi:** click **Call** next to *home*. The mock phone rings; click **Lift handset** under *Phones online*. You hear its beeps, and its *hears* meter moves when you speak.
 * **The Pi calls you:** click **Lift handset** while nothing is ringing. After a short dial tone the phone rings your laptop; click **Answer**.
-* **Run the tests**, including a real two-phone call through LiveKit:
-
-  ```sh
-  docker compose --profile test run --rm test
-  ```
+* **Run the tests**, including a real two-phone call through LiveKit: `docker compose --profile test run --rm test`
 
 Stop everything with `docker compose down`. The images are the public build from `ghcr.io/abutlabs/homephone`. If they can't be pulled yet, Docker builds them from this folder.
 
-## Build a phone
+### With a real Pi
 
-Everything is solder-free: plugs, jumper wires and screw terminals. The full research, with wiring and sources, is in the [hardware doc](https://claude.ai/artifact/A4RnHeqZ5cmp7YKUXtfBv7). Step-by-step setup is in [docs/pi-setup.md](docs/pi-setup.md).
-
-Prices are euros including VAT from Dutch and German shops, checked 18 Nov 2026 where a shop is named. A ~ marks a typical price, not a checked one.
-
-### Pick a build
-
-| Build | What it is | Per phone |
-|---|---|---|
-| **A. Lean phone** (recommended) | Pi Zero 2 WH in a plain box. Lift the handset to ring one household. | **~€97** |
-| **B. Dev phone** | Pi 4 or Pi 5: more memory, 4 USB ports, easier to develop on. Optional screw-terminal HAT and keypad. | **~€110 to ~€180** |
-| **C. Vintage phone** (later) | Build A or B moved into a thrifted 1970s–80s desk phone, with a real bell. | **A or B, plus ~€15 to ~€85** |
-| **App only** | Family members without a housephone use the Polkadot App, with Homephone as a Product inside it. | **€0** |
-
-Two lean phones come to about **€240**, including ~€40 of shared wire, connectors and small tools.
-
-### A. Lean phone, ~€97
-
-| Part | Job | Where | € |
-|---|---|---|---|
-| Raspberry Pi Zero 2 WH (header pre-soldered) | The computer | BerryBase (€20.90) or Kiwi (restock 24 Nov, max 2 each) | 21 |
-| Micro-USB power supply 2.5A, EU plug | Power | Kiwi | 8.50 |
-| 32GB microSD card | Holds the OS | ~any shop | ~6 |
-| Micro-USB OTG hub | The Zero has one USB port; the sound card and ringer need two | ~Amazon.nl | ~8 |
-| Adafruit USB Audio Adapter (#1475) | Handset earpiece and microphone | Kiwi (back 25 Nov) | 3.60 |
-| Retro handset with 3.5mm plug | The part you hold | ~Amazon.nl | ~20 |
-| Adafruit Mini USB Speaker (#3369) | Ringer | Opencircuit | 20.25 |
-| Magnetic door contact (reed switch) | Hook switch | ~Amazon.nl, 10-pack | ~2 |
-| ABS project box, ~150 × 100 × 60 mm | Enclosure | ~any electronics shop | ~8 |
-| **Per phone** | | | **~97** |
-| Jumper wires, Wago 221 lever connectors, small screwdrivers | Shared, once | ~Amazon.nl | ~40 |
-
-To save ~€10 a phone, use any USB-powered mini speaker as the ringer. Order one handset first and check how it sounds before buying more.
-
-### B. Dev phone, ~€110 to ~€180
-
-Same as A, with these swaps. Pi 4 and Pi 5 prices are approximate EU prices after the 2026 increases.
-
-| Swap | € |
-|---|---|
-| Pi Zero 2 WH → **Pi 4 (1GB)** ~€40, or **Pi 5 (1GB)** ~€50, or **Pi 5 (2GB)** ~€80 | +19 to +59 |
-| Micro-USB supply → official USB-C supply (Pi 5 needs the 27W one) | ~+4 |
-| No USB hub needed (4 USB ports) | −8 |
-| Optional: Adafruit Pi-EzConnect screw-terminal HAT (#2711) | ~+20 |
-| Optional: 3×4 phone keypad (#1824) | ~+9 |
-
-A Pi 4 (1GB) without extras is about **€110**. A Pi 5 (2GB) with the HAT and keypad is about **€180**. Choose this if the Zero turns out too small, or for the phone you develop on.
-
-### C. Vintage phone, later
-
-Start from build A or B and drop the box and the retro handset. Add:
-
-| Part | Job | ~€ |
-|---|---|---|
-| Used rotary or push-button desk phone | Shell, handset, hook contacts, dial, bell | 25–60 |
-| Electret or dynamic microphone insert | Replaces the old carbon mic, which a sound card can't read | 10–20 |
-| 2 × 3.5mm plug to screw-terminal adapter | Handset cord to the sound card | ~8 |
-| *Real bell (optional):* Adafruit MOSFET driver (#5648), 12V solenoid (#412), 12V adapter with screw-terminal jack, JST cable | Taps the phone's own bell gong | ~23 |
-
-That is ~€45 to ~€110 of parts, minus the ~€28 box and handset you no longer need. The phone's original bell needs 40–90V AC; tapping it with a 12V solenoid avoids that. Vintage prices are estimates converted from USD.
-
-### Which Pi?
-
-The Zero 2 W (512MB) is the default and should be enough for a voice call, but this hasn't been measured yet; milestone 1 will tell. If it's too small, only the Pi, its power supply and the hub change. Everything else carries over.
-
-## Run it for real (LiveKit Cloud)
-
-For a Pi on your network, or calls between homes, use LiveKit Cloud's free tier (about 5,000 participant-minutes a month). Set it up with [docs/livekit-cloud.md](docs/livekit-cloud.md), then:
+Use LiveKit Cloud's free tier ([docs/livekit-cloud.md](docs/livekit-cloud.md)) or the Docker LiveKit on your laptop, then follow [docs/pi-setup.md](docs/pi-setup.md).
 
 ```sh
 cp .env.example .env       # fill in LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[server]"
 set -a; . ./.env; set +a
-homephone-server run      # prints the link to the laptop test page
+homephone-server run       # prints the link to the laptop test page
 ```
-
-On the Pi, follow [docs/pi-setup.md](docs/pi-setup.md).
 
 ## Repository
 
 ```
 src/homephone/
-  identity.py        Polkadot device account (create, sign, verify)
-  protocol.py        Messages between devices and the server
-  phone/             The Pi program: hook switch, audio, ringer, LiveKit, state machine
-  server/            Ringing server: households, tokens, call routing
-  web/               Laptop test phone (HTML + JS)
+  identity.py        Polkadot device key (create, sign, verify)
+  phone/             The Pi program: hook switch, audio, ringer, call state machine
+  protocol.py        Messages to the temporary ringing server (milestone 1)
+  server/            Temporary ringing server (milestone 1)
+  web/               Laptop test phone (milestone 1)
+docs/
+  polkadot.md        The design: Homephone on Polkadot. Start here
+  calling-stack.md   Voice: WebRTC, NAT traversal, why not Jami
+  architecture.md    How the milestone 1 code works
+  pi-setup.md        Set up a Pi, step by step
+  livekit-cloud.md   LiveKit for milestone 1 tests
 contracts/           Early contract sketch, likely dropped (see docs/polkadot.md)
 deploy/              systemd unit for the Pi, local LiveKit config
-docs/                Pi setup, LiveKit Cloud, architecture
 tests/               Unit and end-to-end tests
 compose.yaml         Laptop test setup
 ```
@@ -151,16 +143,16 @@ compose.yaml         Laptop test setup
 ```sh
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
-pytest                                   # fast tests, no LiveKit needed
+pytest                                        # fast tests, no LiveKit needed
 docker compose --profile test run --rm test   # adds the real LiveKit call test
-homephone --mock                  # a mock phone in your terminal (Enter lifts/hangs up)
+homephone --mock                              # a mock phone in your terminal (Enter lifts/hangs up)
 ```
 
-## Secrets
+## Keys and secrets
 
-* The LiveKit API secret lives only in the server's `.env`, which git ignores. Phones and browsers get short-lived tokens for one call room.
-* Each device's Polkadot secret phrase is in `~/.config/homephone/device-key.json` (mode 600) and never leaves the device. Only the public address is shared.
-* The key in `deploy/livekit-dev.yaml` and `compose.yaml` is for the local test LiveKit only and is public on purpose. Never expose that setup to the internet.
+* Your Polkadot keys stay in the Polkadot App on your phone. A housephone never sees them; pairing gives it its own limited permission to send ringing messages.
+* Each phone's own key is in `~/.config/homephone/device-key.json` (mode 600) and never leaves the device. Only its public address is shared.
+* Milestone 1 only: the LiveKit API secret lives in the server's `.env`, which git ignores. The key in `deploy/livekit-dev.yaml` and `compose.yaml` is for the local test LiveKit and is public on purpose. Never expose that setup to the internet.
 
 ## License
 

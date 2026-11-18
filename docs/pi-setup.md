@@ -2,7 +2,7 @@
 
 This takes about an hour. Nothing needs soldering. Each part is tested on its own before the next, so if something fails you know which part it is.
 
-You need: the parts from build A or B in the [README](../README.md#build-a-phone), a laptop on the same Wi-Fi, and a microSD card reader (many laptops have one, or use a cheap USB one).
+You need: the core parts and a phone (or a bench phone) from [Build a phone](../README.md#build-a-phone), a laptop on the same Wi-Fi, and a microSD card reader (many laptops have one, or use a cheap USB one).
 
 ## 1. Put Raspberry Pi OS on the SD card
 
