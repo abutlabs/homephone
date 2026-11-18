@@ -1,4 +1,4 @@
-// Hearthline laptop test phone.
+// Homephone laptop test phone.
 // Talks to the ringing server over a WebSocket and to LiveKit for audio.
 (() => {
   const params = new URLSearchParams(location.search);

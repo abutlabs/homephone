@@ -6,6 +6,6 @@ rtc:
   udp_port: 7882        # one UDP port for all media, easy to publish from Docker
   use_external_ip: false
 keys:
-  devkey: hearthline-local-dev-secret-not-for-production
+  devkey: homephone-local-dev-secret-not-for-production
 logging:
   level: info

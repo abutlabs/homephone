@@ -20,7 +20,7 @@ from .audio import Handset, Ringer
 from .hook import Hook
 from .media import Media
 
-log = logging.getLogger("hearthline.phone")
+log = logging.getLogger("homephone.phone")
 
 
 class State(str, enum.Enum):

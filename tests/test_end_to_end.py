@@ -9,12 +9,12 @@ import pytest
 import uvicorn
 import websockets
 
-from hearthline.phone.audio import MockHandset, MockRinger
-from hearthline.phone.controller import PhoneController, State
-from hearthline.phone.hook import MockHook
-from hearthline.phone.media import FakeMedia
-from hearthline.phone.signaling import Signaling
-from hearthline.server.app import create_app
+from homephone.phone.audio import MockHandset, MockRinger
+from homephone.phone.controller import PhoneController, State
+from homephone.phone.hook import MockHook
+from homephone.phone.media import FakeMedia
+from homephone.phone.signaling import Signaling
+from homephone.server.app import create_app
 
 
 def free_port():

@@ -1,6 +1,6 @@
 from livekit import api
 
-from hearthline.server.tokens import make_token
+from homephone.server.tokens import make_token
 
 
 def test_token_grants_only_one_room():

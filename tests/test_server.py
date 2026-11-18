@@ -3,8 +3,8 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
-from hearthline.identity import DeviceIdentity
-from hearthline.server.app import create_app
+from homephone.identity import DeviceIdentity
+from homephone.server.app import create_app
 
 
 def recv(ws):
@@ -42,7 +42,7 @@ def client(config, directory):
 
 def test_health_and_index(client):
     assert client.get("/api/health").json()["ok"] is True
-    assert "Hearthline" in client.get("/").text
+    assert "Homephone" in client.get("/").text
     assert client.get("/static/app.js").status_code == 200
     assert client.get("/static/../app.py").status_code == 404
 

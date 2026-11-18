@@ -13,7 +13,7 @@ from __future__ import annotations
 import logging
 from typing import Callable
 
-log = logging.getLogger("hearthline.hook")
+log = logging.getLogger("homephone.hook")
 
 Listener = Callable[[bool], None]  # called with off_hook
 

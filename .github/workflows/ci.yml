@@ -41,8 +41,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/abutlabs/hearthline:latest
-            ghcr.io/abutlabs/hearthline:${{ github.sha }}
+            ghcr.io/abutlabs/homephone:latest
+            ghcr.io/abutlabs/homephone:${{ github.sha }}
       - name: Build and push test image
         uses: docker/build-push-action@v6
         with:
@@ -50,4 +50,4 @@ jobs:
           target: test
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/abutlabs/hearthline:latest-test
+          tags: ghcr.io/abutlabs/homephone:latest-test

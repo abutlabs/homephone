@@ -5,14 +5,14 @@ LiveKit carries the call audio. Its cloud service has a free tier of about 5,000
 You only need this when a real Pi joins, or for calls between homes. The Docker laptop test runs its own LiveKit and needs no account.
 
 1. Go to <https://cloud.livekit.io> and sign up (GitHub or Google sign-in works).
-2. Create a project. Name it anything, for example `hearthline`.
+2. Create a project. Name it anything, for example `homephone`.
 3. Open **Settings → API keys** and create a key. You see three values:
-   * **WebSocket URL**, like `wss://hearthline-abc123.livekit.cloud`
+   * **WebSocket URL**, like `wss://homephone-abc123.livekit.cloud`
    * **API key**, like `APIxxxxxxxx`
    * **API secret**: a long random string. It's shown once, so copy it now.
 4. In your copy of this repo, run `cp .env.example .env` and fill in:
    ```
-   LIVEKIT_URL=wss://hearthline-abc123.livekit.cloud
+   LIVEKIT_URL=wss://homephone-abc123.livekit.cloud
    LIVEKIT_API_KEY=APIxxxxxxxx
    LIVEKIT_API_SECRET=...
    ```
@@ -21,7 +21,7 @@ You only need this when a real Pi joins, or for calls between homes. The Docker 
    python -m venv .venv && . .venv/bin/activate
    pip install -e ".[server]"
    set -a; . ./.env; set +a
-   hearthline-server run
+   homephone-server run
    ```
    It prints a link like `http://localhost:8080/?key=…&household=laptop`. Open it and click **Start test phone**.
 

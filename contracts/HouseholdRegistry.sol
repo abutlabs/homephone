@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 /// @notice Which accounts belong to which household. Stores account addresses
 /// only: no names, no phone numbers, no call records. Targets Polkadot Hub
 /// (testnet first), where msg.sender for a Polkadot account is the H160 that
-/// `hearthline-identity` prints as "Polkadot Hub H160".
+/// `homephone-identity` prints as "Polkadot Hub H160".
 ///
 /// The ringing server reads this instead of households.json, and only rings
 /// devices whose account is a member of the called household.

@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "hearthline"
+name = "homephone"
 version = "0.1.0"
 description = "A landline for the internet age: a Raspberry Pi home phone that rings the whole household."
 readme = "README.md"
@@ -22,18 +22,18 @@ dependencies = [
 pi = ["sounddevice>=0.5", "gpiozero>=2.0"]
 # The token and ringing helper (runs on a laptop or a small server).
 server = ["fastapi>=0.110", "uvicorn[standard]>=0.29", "livekit-api>=1.0"]
-dev = ["pytest>=8", "pytest-asyncio>=0.23", "httpx>=0.27", "hearthline[server]"]
+dev = ["pytest>=8", "pytest-asyncio>=0.23", "httpx>=0.27", "homephone[server]"]
 
 [project.scripts]
-hearthline-phone = "hearthline.phone.__main__:main"
-hearthline-server = "hearthline.server.__main__:main"
-hearthline-identity = "hearthline.identity:main"
+homephone = "homephone.phone.__main__:main"
+homephone-server = "homephone.server.__main__:main"
+homephone-identity = "homephone.identity:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-hearthline = ["web/*"]
+homephone = ["web/*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

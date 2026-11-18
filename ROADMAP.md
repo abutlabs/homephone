@@ -1,6 +1,6 @@
 # Roadmap
 
-Hearthline is a family-and-friends proof of concept first, and maybe a product later. Each milestone ends with something you can pick up and use. The plan is to build two phones: phone 1 is tested against a laptop, then phone 2 joins.
+Homephone is a family-and-friends proof of concept first, and maybe a product later. Each milestone ends with something you can pick up and use. The plan is to build two phones: phone 1 is tested against a laptop, then phone 2 joins.
 
 Last updated: 18 Nov 2026.
 

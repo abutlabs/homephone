@@ -1,0 +1,19 @@
+# systemd unit for the phone. Install (on the Pi):
+#   sudo cp deploy/homephone.service /etc/systemd/system/
+#   sudo systemctl enable --now homephone
+#   journalctl -u homephone -f     # watch the log
+[Unit]
+Description=Homephone
+After=network-online.target sound.target
+Wants=network-online.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/homephone
+EnvironmentFile=/home/pi/homephone/.env
+ExecStart=/home/pi/homephone/.venv/bin/homephone
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

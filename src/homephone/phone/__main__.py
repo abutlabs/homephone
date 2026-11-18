@@ -1,4 +1,4 @@
-"""Run the phone: ``hearthline-phone`` (or ``python -m hearthline.phone``).
+"""Run the phone: ``homephone`` (or ``python -m homephone.phone``).
 
 Settings come from environment variables (see ``.env.example``) and can be
 overridden with flags. ``--mock`` runs without any hardware: the hook switch
@@ -22,30 +22,30 @@ from .hook import MockHook
 from .media import LiveKitMedia
 from .signaling import Signaling
 
-log = logging.getLogger("hearthline")
+log = logging.getLogger("homephone")
 
 
 def parse_args(argv: list[str] | None) -> argparse.Namespace:
     env = os.environ.get
-    p = argparse.ArgumentParser(prog="hearthline-phone")
-    p.add_argument("--server", default=env("HEARTHLINE_SERVER", "ws://localhost:8080/ws"),
+    p = argparse.ArgumentParser(prog="homephone")
+    p.add_argument("--server", default=env("HOMEPHONE_SERVER", "ws://localhost:8080/ws"),
                    help="ringing server WebSocket URL")
-    p.add_argument("--name", default=env("HEARTHLINE_PHONE_NAME", "Pi phone"))
-    p.add_argument("--household", default=env("HEARTHLINE_HOUSEHOLD"),
+    p.add_argument("--name", default=env("HOMEPHONE_PHONE_NAME", "Pi phone"))
+    p.add_argument("--household", default=env("HOMEPHONE_HOUSEHOLD"),
                    help="household to join (only used if the server allows auto-enroll)")
-    p.add_argument("--call", default=env("HEARTHLINE_DEFAULT_CALL", "laptop"),
+    p.add_argument("--call", default=env("HOMEPHONE_DEFAULT_CALL", "laptop"),
                    help="household to ring when the handset is lifted")
     p.add_argument("--keyfile", type=Path, default=DEFAULT_KEYFILE)
-    p.add_argument("--livekit-url", default=env("HEARTHLINE_LIVEKIT_URL"),
+    p.add_argument("--livekit-url", default=env("HOMEPHONE_LIVEKIT_URL"),
                    help="override the LiveKit URL the server hands out")
-    p.add_argument("--mock", default=env("HEARTHLINE_MOCK", ""), nargs="?", const="all",
+    p.add_argument("--mock", default=env("HOMEPHONE_MOCK", ""), nargs="?", const="all",
                    help="mock hardware: 'all', or a comma list of hook,audio,ringer")
-    p.add_argument("--hook-pin", type=int, default=int(env("HEARTHLINE_HOOK_PIN", "17")))
+    p.add_argument("--hook-pin", type=int, default=int(env("HOMEPHONE_HOOK_PIN", "17")))
     p.add_argument("--off-hook-when", choices=["open", "closed"],
-                   default=env("HEARTHLINE_OFF_HOOK_WHEN", "open"),
+                   default=env("HOMEPHONE_OFF_HOOK_WHEN", "open"),
                    help="switch state that means the handset is lifted")
-    p.add_argument("--handset-device", default=env("HEARTHLINE_HANDSET_DEVICE", "USB Audio"))
-    p.add_argument("--ringer-device", default=env("HEARTHLINE_RINGER_DEVICE"))
+    p.add_argument("--handset-device", default=env("HOMEPHONE_HANDSET_DEVICE", "USB Audio"))
+    p.add_argument("--ringer-device", default=env("HOMEPHONE_RINGER_DEVICE"))
     p.add_argument("-v", "--verbose", action="store_true")
     return p.parse_args(argv)
 

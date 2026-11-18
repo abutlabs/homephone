@@ -1,6 +1,6 @@
 import stat
 
-from hearthline.identity import DeviceIdentity, account_to_hub_address, verify_hello
+from homephone.identity import DeviceIdentity, account_to_hub_address, verify_hello
 
 
 def test_create_persist_and_reload(tmp_path):

@@ -16,7 +16,7 @@ import websockets
 from ..identity import DeviceIdentity
 from ..protocol import decode, encode
 
-log = logging.getLogger("hearthline.signaling")
+log = logging.getLogger("homephone.signaling")
 
 Handler = Callable[[dict[str, Any]], Awaitable[None]]
 

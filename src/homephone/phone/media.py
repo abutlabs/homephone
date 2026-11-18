@@ -14,7 +14,7 @@ import numpy as np
 
 from .audio import FRAME, RATE, Handset
 
-log = logging.getLogger("hearthline.media")
+log = logging.getLogger("homephone.media")
 
 
 class Media:

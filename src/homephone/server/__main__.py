@@ -1,4 +1,4 @@
-"""Run the ringing server: ``hearthline-server`` (or ``python -m hearthline.server``)."""
+"""Run the ringing server: ``homephone-server`` (or ``python -m homephone.server``)."""
 
 from __future__ import annotations
 
@@ -17,16 +17,16 @@ def _env_bool(name: str, default: bool = False) -> bool:
 
 
 def main(argv: list[str] | None = None) -> None:
-    p = argparse.ArgumentParser(prog="hearthline-server")
+    p = argparse.ArgumentParser(prog="homephone-server")
     p.add_argument(
         "--households",
         type=Path,
-        default=Path(os.environ.get("HEARTHLINE_HOUSEHOLDS", "households.json")),
+        default=Path(os.environ.get("HOMEPHONE_HOUSEHOLDS", "households.json")),
     )
     sub = p.add_subparsers(dest="cmd")
     run = sub.add_parser("run", help="run the server (default)")
-    run.add_argument("--host", default=os.environ.get("HEARTHLINE_HOST", "0.0.0.0"))
-    run.add_argument("--port", type=int, default=int(os.environ.get("HEARTHLINE_PORT", "8080")))
+    run.add_argument("--host", default=os.environ.get("HOMEPHONE_HOST", "0.0.0.0"))
+    run.add_argument("--port", type=int, default=int(os.environ.get("HOMEPHONE_PORT", "8080")))
     enroll = sub.add_parser("enroll", help="add a phone to a household")
     enroll.add_argument("--household", required=True)
     enroll.add_argument("--address", required=True, help="the phone's Polkadot address")
@@ -60,15 +60,15 @@ def main(argv: list[str] | None = None) -> None:
         livekit_url=os.environ["LIVEKIT_URL"],
         livekit_api_key=os.environ["LIVEKIT_API_KEY"],
         livekit_api_secret=os.environ["LIVEKIT_API_SECRET"],
-        ring_timeout=float(os.environ.get("HEARTHLINE_RING_TIMEOUT", "45")),
-        auto_enroll=_env_bool("HEARTHLINE_AUTO_ENROLL"),
-        allow_mock_control=_env_bool("HEARTHLINE_MOCK_CONTROL", True),
+        ring_timeout=float(os.environ.get("HOMEPHONE_RING_TIMEOUT", "45")),
+        auto_enroll=_env_bool("HOMEPHONE_AUTO_ENROLL"),
+        allow_mock_control=_env_bool("HOMEPHONE_MOCK_CONTROL", True),
     )
-    if os.environ.get("HEARTHLINE_WEB_KEY"):
-        config.web_key = os.environ["HEARTHLINE_WEB_KEY"]
+    if os.environ.get("HOMEPHONE_WEB_KEY"):
+        config.web_key = os.environ["HOMEPHONE_WEB_KEY"]
     host = getattr(args, "host", "0.0.0.0")
     port = getattr(args, "port", 8080)
-    public = os.environ.get("HEARTHLINE_PUBLIC_URL", f"http://localhost:{port}")
+    public = os.environ.get("HOMEPHONE_PUBLIC_URL", f"http://localhost:{port}")
     print(f"\n  Laptop test client: {public}/?key={config.web_key}&household=laptop\n", flush=True)
     uvicorn.run(create_app(config, directory), host=host, port=port, log_level="warning")
 

@@ -6,11 +6,11 @@
 # Run the tests (including a real two-phone call through LiveKit):
 #   docker compose --profile test run --rm test
 #
-# Images come from the public build (ghcr.io/abutlabs/hearthline) and are
+# Images come from the public build (ghcr.io/abutlabs/homephone) and are
 # built from this folder if they cannot be pulled.
 
-x-hearthline: &hearthline
-  image: ghcr.io/abutlabs/hearthline:${HEARTHLINE_TAG:-latest}
+x-homephone: &homephone
+  image: ghcr.io/abutlabs/homephone:${HOMEPHONE_TAG:-latest}
   build:
     context: .
     target: runtime
@@ -29,13 +29,13 @@ services:
     restart: unless-stopped
 
   server:
-    <<: *hearthline
+    <<: *homephone
     environment:
       LIVEKIT_URL: ws://localhost:7880
       LIVEKIT_API_KEY: devkey
-      LIVEKIT_API_SECRET: hearthline-local-dev-secret-not-for-production
-      HEARTHLINE_WEB_KEY: ${HEARTHLINE_WEB_KEY:-letmein}
-      HEARTHLINE_AUTO_ENROLL: "1"
+      LIVEKIT_API_SECRET: homephone-local-dev-secret-not-for-production
+      HOMEPHONE_WEB_KEY: ${HOMEPHONE_WEB_KEY:-letmein}
+      HOMEPHONE_AUTO_ENROLL: "1"
     ports:
       - "8080:8080"
     volumes:
@@ -44,8 +44,8 @@ services:
   # A Pi phone with mocked hardware. It shares LiveKit's network, so
   # "localhost:7880" reaches LiveKit both from here and from your browser.
   phone:
-    <<: *hearthline
-    command: ["hearthline-phone", "--mock", "--server", "ws://server:8080/ws",
+    <<: *homephone
+    command: ["homephone", "--mock", "--server", "ws://server:8080/ws",
               "--household", "home", "--call", "laptop", "--name", "Mock Pi phone"]
     network_mode: "service:livekit"
     depends_on: [livekit, server]
@@ -57,13 +57,13 @@ services:
     build:
       context: .
       target: test
-    image: ghcr.io/abutlabs/hearthline:${HEARTHLINE_TAG:-latest}-test
+    image: ghcr.io/abutlabs/homephone:${HOMEPHONE_TAG:-latest}-test
     network_mode: "service:livekit"
     depends_on: [livekit]
     environment:
-      HEARTHLINE_E2E_LIVEKIT_URL: ws://localhost:7880
-      HEARTHLINE_E2E_API_KEY: devkey
-      HEARTHLINE_E2E_API_SECRET: hearthline-local-dev-secret-not-for-production
+      HOMEPHONE_E2E_LIVEKIT_URL: ws://localhost:7880
+      HOMEPHONE_E2E_API_KEY: devkey
+      HOMEPHONE_E2E_API_SECRET: homephone-local-dev-secret-not-for-production
 
 volumes:
   server-data:

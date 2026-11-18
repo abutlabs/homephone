@@ -4,11 +4,11 @@
 
 | Piece | Where it runs | Code |
 |---|---|---|
-| Phone program | Raspberry Pi (64-bit Raspberry Pi OS Lite) | `src/hearthline/phone` |
-| Ringing server | Laptop for now, later a small server | `src/hearthline/server` |
-| Laptop test phone | Any browser, served by the ringing server | `src/hearthline/web` |
+| Phone program | Raspberry Pi (64-bit Raspberry Pi OS Lite) | `src/homephone/phone` |
+| Ringing server | Laptop for now, later a small server | `src/homephone/server` |
+| Laptop test phone | Any browser, served by the ringing server | `src/homephone/web` |
 | Media | LiveKit Cloud, or a local LiveKit in Docker | — |
-| Device identity | Each device, `~/.config/hearthline/device-key.json` | `src/hearthline/identity.py` |
+| Device identity | Each device, `~/.config/homephone/device-key.json` | `src/homephone/identity.py` |
 | Household contract | Polkadot Hub (milestone 4) | `contracts/HouseholdRegistry.sol` |
 
 The ringing server never touches audio. It only decides who rings, who answered, and hands each side a LiveKit token for that call's room. Audio is WebRTC (Opus) between the device and LiveKit.
@@ -34,16 +34,16 @@ States:
 | in_call | talking | the far end | — |
 | ended | the far end hung up, or nobody is home | busy tone | — |
 
-Milestone 1 has no keypad: lifting the handset waits 1.5 s on dial tone and then rings `HEARTHLINE_DEFAULT_CALL`. Hanging up during the dial tone cancels it.
+Milestone 1 has no keypad: lifting the handset waits 1.5 s on dial tone and then rings `HOMEPHONE_DEFAULT_CALL`. Hanging up during the dial tone cancels it.
 
 Hardware is behind small interfaces (`Hook`, `Handset`, `Ringer`, `Media`), each with a mock, so the same program runs on a laptop, in Docker and in tests.
 
 ## Ringing protocol
 
-JSON over one WebSocket per device at `/ws`. The full list is in `src/hearthline/protocol.py`.
+JSON over one WebSocket per device at `/ws`. The full list is in `src/homephone/protocol.py`.
 
 1. Server sends `challenge {nonce}`.
-2. A phone replies `hello {kind: phone, address, signature}`, signing `hearthline-hello:<nonce>` with its Polkadot sr25519 key. The server checks the signature and looks the address up in the household list. The laptop page sends `hello {kind: web, key, household}` with the key the server printed.
+2. A phone replies `hello {kind: phone, address, signature}`, signing `homephone-hello:<nonce>` with its Polkadot sr25519 key. The server checks the signature and looks the address up in the household list. The laptop page sends `hello {kind: web, key, household}` with the key the server printed.
 3. `call {to: <household>}`: the server sends the caller `calling` with a token and rings every free device in that household with `ring`.
 4. The first `answer` wins: that device gets `join` with its token, the caller gets `answered`, and every other device gets `stop_ring`.
 5. `hangup` from either side ends it; the other side gets `ended`. A device that hangs up while ringing only declines for itself.
@@ -51,7 +51,7 @@ JSON over one WebSocket per device at `/ws`. The full list is in `src/hearthline
 
 ## Identity and Polkadot
 
-* On first start a device generates a 12-word secret phrase and an sr25519 keypair, saved with mode 600. `hearthline-identity` prints its Polkadot address and the H160 address that Polkadot Hub contracts see for it.
+* On first start a device generates a 12-word secret phrase and an sr25519 keypair, saved with mode 600. `homephone-identity` prints its Polkadot address and the H160 address that Polkadot Hub contracts see for it.
 * Signing in with that key means the server doesn't need passwords for phones, and the same account becomes the device's membership in the household contract (M4).
 * Only account addresses go on-chain. Names and call history stay off it.
 * Ringing over Polkadot's own messaging (People chain Statement Store) is a later experiment; see [ROADMAP.md](../ROADMAP.md).

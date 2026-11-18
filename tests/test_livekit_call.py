@@ -1,6 +1,6 @@
 """A real call through a LiveKit server: two mock phones, real WebRTC.
 
-Skipped unless HEARTHLINE_E2E_LIVEKIT_URL is set. The Docker test service
+Skipped unless HOMEPHONE_E2E_LIVEKIT_URL is set. The Docker test service
 sets it:  docker compose --profile test run --rm test
 """
 
@@ -9,18 +9,18 @@ import os
 
 import pytest
 
-from hearthline.identity import DeviceIdentity
-from hearthline.phone.audio import MockHandset, MockRinger
-from hearthline.phone.controller import PhoneController, State
-from hearthline.phone.hook import MockHook
-from hearthline.phone.media import LiveKitMedia
-from hearthline.phone.signaling import Signaling
-from hearthline.server.app import ServerConfig, create_app
-from hearthline.server.households import Directory, Household
+from homephone.identity import DeviceIdentity
+from homephone.phone.audio import MockHandset, MockRinger
+from homephone.phone.controller import PhoneController, State
+from homephone.phone.hook import MockHook
+from homephone.phone.media import LiveKitMedia
+from homephone.phone.signaling import Signaling
+from homephone.server.app import ServerConfig, create_app
+from homephone.server.households import Directory, Household
 
 from .test_end_to_end import free_port, wait_for
 
-URL = os.environ.get("HEARTHLINE_E2E_LIVEKIT_URL")
+URL = os.environ.get("HOMEPHONE_E2E_LIVEKIT_URL")
 pytestmark = pytest.mark.skipif(not URL, reason="needs a LiveKit server (see compose.yaml)")
 
 
@@ -32,7 +32,7 @@ async def test_two_phones_hear_each_other():
         Household("house-a", "A", {a_id.address: "Phone A"}),
         Household("house-b", "B", {b_id.address: "Phone B"}),
     ])
-    config = ServerConfig(URL, os.environ["HEARTHLINE_E2E_API_KEY"], os.environ["HEARTHLINE_E2E_API_SECRET"])
+    config = ServerConfig(URL, os.environ["HOMEPHONE_E2E_API_KEY"], os.environ["HOMEPHONE_E2E_API_SECRET"])
     port = free_port()
     server = uvicorn.Server(uvicorn.Config(create_app(config, directory), port=port, log_level="warning"))
     srv = asyncio.create_task(server.serve())

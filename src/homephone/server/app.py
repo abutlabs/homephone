@@ -29,7 +29,7 @@ from ..protocol import decode, encode
 from .households import Directory, valid_household_id
 from .tokens import make_token
 
-log = logging.getLogger("hearthline.server")
+log = logging.getLogger("homephone.server")
 
 
 @dataclass
@@ -188,7 +188,7 @@ class Hub:
                 await conn.send(
                     "error",
                     message=f"unknown phone {address}: add it with "
-                    f"'hearthline-server enroll --household <id> --address {address}'",
+                    f"'homephone-server enroll --household <id> --address {address}'",
                 )
                 return False
             conn.kind, conn.household = "phone", household.id
@@ -319,10 +319,10 @@ class Hub:
 
 
 def create_app(config: ServerConfig, directory: Directory) -> FastAPI:
-    app = FastAPI(title="Hearthline ringing server")
+    app = FastAPI(title="Homephone ringing server")
     hub = Hub(config, directory)
     app.state.hub = hub
-    web = resources.files("hearthline") / "web"
+    web = resources.files("homephone") / "web"
 
     @app.get("/")
     async def index() -> FileResponse:

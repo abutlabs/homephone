@@ -24,7 +24,7 @@ import numpy as np
 
 from . import tones
 
-log = logging.getLogger("hearthline.audio")
+log = logging.getLogger("homephone.audio")
 
 RATE = 48_000
 FRAME = 480  # 10 ms

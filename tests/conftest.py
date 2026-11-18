@@ -1,8 +1,8 @@
 import pytest
 
-from hearthline.identity import DeviceIdentity
-from hearthline.server.app import ServerConfig
-from hearthline.server.households import Directory, Household
+from homephone.identity import DeviceIdentity
+from homephone.server.app import ServerConfig
+from homephone.server.households import Directory, Household
 
 
 @pytest.fixture

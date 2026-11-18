@@ -2,10 +2,10 @@ import asyncio
 
 import pytest
 
-from hearthline.phone.audio import MockHandset, MockRinger
-from hearthline.phone.controller import PhoneController, State
-from hearthline.phone.hook import MockHook
-from hearthline.phone.media import FakeMedia
+from homephone.phone.audio import MockHandset, MockRinger
+from homephone.phone.controller import PhoneController, State
+from homephone.phone.hook import MockHook
+from homephone.phone.media import FakeMedia
 
 
 class Phone:

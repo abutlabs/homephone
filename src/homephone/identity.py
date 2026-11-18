@@ -28,10 +28,10 @@ from substrateinterface import Keypair, KeypairType
 POLKADOT_SS58 = 0
 
 DEFAULT_KEYFILE = Path(
-    os.environ.get("HEARTHLINE_KEYFILE", "~/.config/hearthline/device-key.json")
+    os.environ.get("HOMEPHONE_KEYFILE", "~/.config/homephone/device-key.json")
 ).expanduser()
 
-HELLO_PREFIX = b"hearthline-hello:"
+HELLO_PREFIX = b"homephone-hello:"
 
 
 @dataclass
@@ -129,7 +129,7 @@ def verify_hello(address: str, nonce: str, signature: str) -> bool:
 def main(argv: list[str] | None = None) -> None:
     p = argparse.ArgumentParser(description="Show or create this device's Polkadot account.")
     p.add_argument("--keyfile", type=Path, default=DEFAULT_KEYFILE)
-    p.add_argument("--name", default=os.environ.get("HEARTHLINE_PHONE_NAME", "phone"))
+    p.add_argument("--name", default=os.environ.get("HOMEPHONE_PHONE_NAME", "phone"))
     args = p.parse_args(argv)
     existed = args.keyfile.exists()
     ident = DeviceIdentity.load_or_create(args.keyfile, args.name)

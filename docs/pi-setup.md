@@ -12,7 +12,7 @@ You need: the parts from build A or B in the [README](../README.md#build-a-phone
    * **Operating system:** *Raspberry Pi OS (other)* → **Raspberry Pi OS Lite (64-bit)**. Lite has no desktop, which saves memory.
    * **Storage:** your microSD card.
 3. When it asks about OS customisation, choose **Edit settings** and set:
-   * **Hostname:** `hearthline-1` (phone 2 becomes `hearthline-2`).
+   * **Hostname:** `homephone-1` (phone 2 becomes `homephone-2`).
    * **Username and password:** username `pi` and a password you'll remember. The service file assumes `pi`.
    * **Wireless LAN:** your Wi-Fi name and password, and country **NL**.
    * **Services** tab: **Enable SSH**, with password authentication.
@@ -23,28 +23,28 @@ You need: the parts from build A or B in the [README](../README.md#build-a-phone
 1. Put the card in the Pi and plug in the power. Give it 2–3 minutes the first time.
 2. On your laptop, open a terminal (on a Mac: the *Terminal* app) and run:
    ```sh
-   ssh pi@hearthline-1.local
+   ssh pi@homephone-1.local
    ```
    Type `yes` to the fingerprint question, then your password. You're now typing on the Pi.
-   If `hearthline-1.local` isn't found, look up the Pi's address in your router's device list and use `ssh pi@<that address>`.
+   If `homephone-1.local` isn't found, look up the Pi's address in your router's device list and use `ssh pi@<that address>`.
 3. Update it:
    ```sh
    sudo apt update && sudo apt full-upgrade -y
    ```
 
-## 3. Install Hearthline
+## 3. Install Homephone
 
 ```sh
 sudo apt install -y git python3-venv python3-gpiozero python3-lgpio libportaudio2 alsa-utils
-git clone https://github.com/abutlabs/hearthline.git
-cd hearthline
+git clone https://github.com/abutlabs/homephone.git
+cd homephone
 python3 -m venv --system-site-packages .venv   # system packages give the venv GPIO access
 . .venv/bin/activate
 pip install -e ".[pi]"
-hearthline-identity
+homephone-identity
 ```
 
-`hearthline-identity` creates the phone's Polkadot account and prints its address. Keep that address for step 8. The secret stays in `~/.config/hearthline/device-key.json`; never copy that file anywhere.
+`homephone-identity` creates the phone's Polkadot account and prints its address. Keep that address for step 8. The secret stays in `~/.config/homephone/device-key.json`; never copy that file anywhere.
 
 On a Pi Zero, `pip install` can take 10–20 minutes. That's normal.
 
@@ -88,11 +88,11 @@ Pin 1 is the corner pin nearest the SD card slot, on the inside row. Glue the ma
 Power on, log in again, and test:
 
 ```sh
-cd hearthline && . .venv/bin/activate
+cd homephone && . .venv/bin/activate
 python -c "from gpiozero import Button; from signal import pause; b=Button(17); b.when_pressed=lambda:print('closed'); b.when_released=lambda:print('open'); pause()"
 ```
 
-Lift and replace the handset. With a reed switch it usually prints `open` when you lift it. If it prints `closed` when lifted, set `HEARTHLINE_OFF_HOOK_WHEN=closed` in step 7. Press Ctrl+C to stop.
+Lift and replace the handset. With a reed switch it usually prints `open` when you lift it. If it prints `closed` when lifted, set `HOMEPHONE_OFF_HOOK_WHEN=closed` in step 7. Press Ctrl+C to stop.
 
 ## 7. Configure the phone
 
@@ -103,10 +103,10 @@ nano .env
 
 Set the phone part:
 
-* `HEARTHLINE_SERVER=ws://<your laptop's address>:8080/ws`. Find the laptop's address in its Wi-Fi settings, for example `192.168.1.20`.
-* `HEARTHLINE_PHONE_NAME=Kitchen phone`
-* `HEARTHLINE_DEFAULT_CALL=laptop`
-* `HEARTHLINE_HANDSET_DEVICE=USB Audio` and `HEARTHLINE_RINGER_DEVICE=UACDemo`, or part of the names that `python -m sounddevice` lists.
+* `HOMEPHONE_SERVER=ws://<your laptop's address>:8080/ws`. Find the laptop's address in its Wi-Fi settings, for example `192.168.1.20`.
+* `HOMEPHONE_PHONE_NAME=Kitchen phone`
+* `HOMEPHONE_DEFAULT_CALL=laptop`
+* `HOMEPHONE_HANDSET_DEVICE=USB Audio` and `HOMEPHONE_RINGER_DEVICE=UACDemo`, or part of the names that `python -m sounddevice` lists.
 
 Leave the LiveKit lines empty on the Pi. Only the server needs them.
 
@@ -117,8 +117,8 @@ Save with Ctrl+O, Enter, then Ctrl+X.
 On your **laptop**, start the ringing server with LiveKit Cloud ([docs/livekit-cloud.md](livekit-cloud.md)) and add the phone to a household:
 
 ```sh
-hearthline-server enroll --household home --address <the Pi's address from step 3> --name "Kitchen phone"
-hearthline-server run
+homephone-server enroll --household home --address <the Pi's address from step 3> --name "Kitchen phone"
+homephone-server run
 ```
 
 Open the link it prints and click **Start test phone**.
@@ -127,7 +127,7 @@ On the **Pi**:
 
 ```sh
 set -a; . ./.env; set +a
-hearthline-phone
+homephone
 ```
 
 You should see `joined household 'home'`. Now:
@@ -135,17 +135,17 @@ You should see `joined household 'home'`. Now:
 * Lift the handset: dial tone, then the laptop rings. Answer it on the laptop.
 * Or click **Call** next to *home* on the laptop: the USB speaker rings. Lift the handset to answer.
 
-**No LiveKit account?** You can use the Docker LiveKit on your laptop instead. Start it with `LIVEKIT_NODE_IP=<laptop address> docker compose up`, and on the Pi add `HEARTHLINE_LIVEKIT_URL=ws://<laptop address>:7880` and `HEARTHLINE_HOUSEHOLD=home` to `.env` and point `HEARTHLINE_SERVER` at the laptop as above. The Docker server lets the phone join `home` by itself.
+**No LiveKit account?** You can use the Docker LiveKit on your laptop instead. Start it with `LIVEKIT_NODE_IP=<laptop address> docker compose up`, and on the Pi add `HOMEPHONE_LIVEKIT_URL=ws://<laptop address>:7880` and `HOMEPHONE_HOUSEHOLD=home` to `.env` and point `HOMEPHONE_SERVER` at the laptop as above. The Docker server lets the phone join `home` by itself.
 
 ## 9. Start on boot
 
 ```sh
-sudo cp deploy/hearthline-phone.service /etc/systemd/system/
-sudo systemctl enable --now hearthline-phone
-journalctl -u hearthline-phone -f
+sudo cp deploy/homephone.service /etc/systemd/system/
+sudo systemctl enable --now homephone
+journalctl -u homephone -f
 ```
 
-The phone now starts by itself after a power cut. Stop it with `sudo systemctl stop hearthline-phone`.
+The phone now starts by itself after a power cut. Stop it with `sudo systemctl stop homephone`.
 
 ## Troubleshooting
 
@@ -154,7 +154,7 @@ The phone now starts by itself after a power cut. Stop it with `sudo systemctl s
 | `no output sound device matching 'USB Audio'` | `python -m sounddevice` lists names; put part of the right one in `.env`. |
 | You hear nothing in the earpiece | `alsamixer`, F6, pick the USB card, raise *Speaker*; check the plug is in the headphone jack. |
 | The other side can't hear you | Raise *Mic* in `alsamixer`; check the plug is in the mic jack. |
-| Hook state is backwards | Flip `HEARTHLINE_OFF_HOOK_WHEN` between `open` and `closed`. |
+| Hook state is backwards | Flip `HOMEPHONE_OFF_HOOK_WHEN` between `open` and `closed`. |
 | `server unreachable` | Check the laptop's address, that the server is running, and that the laptop firewall allows port 8080. |
-| `unknown phone` | Run the `enroll` command on the laptop with the address from `hearthline-identity`. |
+| `unknown phone` | Run the `enroll` command on the laptop with the address from `homephone-identity`. |
 | Pi Zero runs out of memory | Check with `free -h` during a call. If it's tight, move to build B (Pi 4 or 5). Please note the numbers in an issue; it answers an open question. |

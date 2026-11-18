@@ -1,4 +1,4 @@
-# Hearthline
+# Homephone
 
 A landline for the internet age: a Raspberry Pi home phone that rings the whole household, built on WebRTC and Polkadot.
 
@@ -21,10 +21,10 @@ Call a household, not a person. Every phone in that home rings at once, and whoe
         |<============ voice: WebRTC through LiveKit =================>|
 ```
 
-* **The phone** (`src/hearthline/phone`) is a Python program for 64-bit Raspberry Pi OS Lite. It watches a hook switch on a GPIO pin, plays a bell on a USB speaker, and carries the call on a USB sound card wired to a handset. In milestone 1, lifting the handset rings one household (a hotline), so no keypad is needed.
-* **The ringing server** (`src/hearthline/server`) knows which device belongs to which household, rings all of a household's devices at once, stops the others when one answers, and hands out LiveKit tokens. The LiveKit secret stays on the server.
-* **The laptop test phone** (`src/hearthline/web`) is a single web page served by the ringing server. It can call and answer, and it can lift and hang up mock phones.
-* **Polkadot**: every device creates an sr25519 account on first start (`hearthline-identity`) and signs in with it. Households move to a contract on Polkadot Hub in milestone 4 ([sketch](contracts/HouseholdRegistry.sol)).
+* **The phone** (`src/homephone/phone`) is a Python program for 64-bit Raspberry Pi OS Lite. It watches a hook switch on a GPIO pin, plays a bell on a USB speaker, and carries the call on a USB sound card wired to a handset. In milestone 1, lifting the handset rings one household (a hotline), so no keypad is needed.
+* **The ringing server** (`src/homephone/server`) knows which device belongs to which household, rings all of a household's devices at once, stops the others when one answers, and hands out LiveKit tokens. The LiveKit secret stays on the server.
+* **The laptop test phone** (`src/homephone/web`) is a single web page served by the ringing server. It can call and answer, and it can lift and hang up mock phones.
+* **Polkadot**: every device creates an sr25519 account on first start (`homephone-identity`) and signs in with it. Households move to a contract on Polkadot Hub in milestone 4 ([sketch](contracts/HouseholdRegistry.sol)).
 
 More detail: [docs/architecture.md](docs/architecture.md).
 
@@ -33,8 +33,8 @@ More detail: [docs/architecture.md](docs/architecture.md).
 You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine on Linux). This runs a local LiveKit server, the ringing server, and a pretend Pi phone whose microphone sends short beeps.
 
 ```sh
-git clone https://github.com/abutlabs/hearthline.git
-cd hearthline
+git clone https://github.com/abutlabs/homephone.git
+cd homephone
 docker compose up
 ```
 
@@ -48,7 +48,7 @@ Then open **http://localhost:8080/?key=letmein&household=laptop** and click **St
   docker compose --profile test run --rm test
   ```
 
-Stop everything with `docker compose down`. The images are the public build from `ghcr.io/abutlabs/hearthline`. If they can't be pulled yet, Docker builds them from this folder.
+Stop everything with `docker compose down`. The images are the public build from `ghcr.io/abutlabs/homephone`. If they can't be pulled yet, Docker builds them from this folder.
 
 ## Build a phone
 
@@ -125,7 +125,7 @@ cp .env.example .env       # fill in LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_S
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[server]"
 set -a; . ./.env; set +a
-hearthline-server run      # prints the link to the laptop test page
+homephone-server run      # prints the link to the laptop test page
 ```
 
 On the Pi, follow [docs/pi-setup.md](docs/pi-setup.md).
@@ -133,7 +133,7 @@ On the Pi, follow [docs/pi-setup.md](docs/pi-setup.md).
 ## Repository
 
 ```
-src/hearthline/
+src/homephone/
   identity.py        Polkadot device account (create, sign, verify)
   protocol.py        Messages between devices and the server
   phone/             The Pi program: hook switch, audio, ringer, LiveKit, state machine
@@ -153,13 +153,13 @@ python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
 pytest                                   # fast tests, no LiveKit needed
 docker compose --profile test run --rm test   # adds the real LiveKit call test
-hearthline-phone --mock                  # a mock phone in your terminal (Enter lifts/hangs up)
+homephone --mock                  # a mock phone in your terminal (Enter lifts/hangs up)
 ```
 
 ## Secrets
 
 * The LiveKit API secret lives only in the server's `.env`, which git ignores. Phones and browsers get short-lived tokens for one call room.
-* Each device's Polkadot secret phrase is in `~/.config/hearthline/device-key.json` (mode 600) and never leaves the device. Only the public address is shared.
+* Each device's Polkadot secret phrase is in `~/.config/homephone/device-key.json` (mode 600) and never leaves the device. Only the public address is shared.
 * The key in `deploy/livekit-dev.yaml` and `compose.yaml` is for the local test LiveKit only and is public on purpose. Never expose that setup to the internet.
 
 ## License
