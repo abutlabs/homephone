@@ -1,0 +1,70 @@
+# Laptop test setup: a local LiveKit, the ringing server, and a mock phone.
+#
+#   docker compose up
+#   open http://localhost:8080/?key=letmein&household=laptop
+#
+# Run the tests (including a real two-phone call through LiveKit):
+#   docker compose --profile test run --rm test
+#
+# Images come from the public build (ghcr.io/abutlabs/hearthline) and are
+# built from this folder if they cannot be pulled.
+
+x-hearthline: &hearthline
+  image: ghcr.io/abutlabs/hearthline:${HEARTHLINE_TAG:-latest}
+  build:
+    context: .
+    target: runtime
+  restart: unless-stopped
+
+services:
+  livekit:
+    image: livekit/livekit-server:v1.10.1
+    command: ["--config", "/etc/livekit.yaml", "--node-ip", "${LIVEKIT_NODE_IP:-127.0.0.1}"]
+    volumes:
+      - ./deploy/livekit-dev.yaml:/etc/livekit.yaml:ro
+    ports:
+      - "7880:7880"       # signalling (WebSocket)
+      - "7881:7881"       # media over TCP (fallback)
+      - "7882:7882/udp"   # media over UDP
+    restart: unless-stopped
+
+  server:
+    <<: *hearthline
+    environment:
+      LIVEKIT_URL: ws://localhost:7880
+      LIVEKIT_API_KEY: devkey
+      LIVEKIT_API_SECRET: hearthline-local-dev-secret-not-for-production
+      HEARTHLINE_WEB_KEY: ${HEARTHLINE_WEB_KEY:-letmein}
+      HEARTHLINE_AUTO_ENROLL: "1"
+    ports:
+      - "8080:8080"
+    volumes:
+      - server-data:/data
+
+  # A Pi phone with mocked hardware. It shares LiveKit's network, so
+  # "localhost:7880" reaches LiveKit both from here and from your browser.
+  phone:
+    <<: *hearthline
+    command: ["hearthline-phone", "--mock", "--server", "ws://server:8080/ws",
+              "--household", "home", "--call", "laptop", "--name", "Mock Pi phone"]
+    network_mode: "service:livekit"
+    depends_on: [livekit, server]
+    volumes:
+      - phone-data:/data
+
+  test:
+    profiles: ["test"]
+    build:
+      context: .
+      target: test
+    image: ghcr.io/abutlabs/hearthline:${HEARTHLINE_TAG:-latest}-test
+    network_mode: "service:livekit"
+    depends_on: [livekit]
+    environment:
+      HEARTHLINE_E2E_LIVEKIT_URL: ws://localhost:7880
+      HEARTHLINE_E2E_API_KEY: devkey
+      HEARTHLINE_E2E_API_SECRET: hearthline-local-dev-secret-not-for-production
+
+volumes:
+  server-data:
+  phone-data:

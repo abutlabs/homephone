@@ -1,0 +1,37 @@
+:root {
+  --bg: #f6f3ee; --card: #fffdf9; --ink: #2b2620; --muted: #7a7064;
+  --line: #e4ddd2; --accent: #b4532a; --accent-ink: #fff; --danger: #a8322d; --ok: #3b7a4a;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #1d1a17; --card: #26221e; --ink: #efe8de; --muted: #a59a8c;
+          --line: #3a342d; --accent: #d9774a; --danger: #d0574f; --ok: #6fb07f; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+       font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { margin: 0; font-size: 28px; }
+h2 { margin: 0 0 12px; font-size: 18px; }
+.sub { margin: 4px 0 20px; color: var(--muted); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+        padding: 16px; margin-bottom: 16px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+button { font: inherit; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--line);
+         background: var(--card); color: var(--ink); cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+button.danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+button:disabled { opacity: .5; cursor: default; }
+.state { font-size: 20px; margin-bottom: 12px; }
+.state.ringing { color: var(--accent); animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: .5; } }
+.pill { padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); font-size: 13px; }
+.pill.on { color: var(--ok); border-color: var(--ok); }
+.list { list-style: none; margin: 0; padding: 0; }
+.list li { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+           padding: 8px 0; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.list li:first-child { border-top: 0; }
+.meta { color: var(--muted); font-size: 14px; }
+.meters { display: grid; gap: 4px; margin-top: 12px; }
+meter { width: 160px; vertical-align: middle; }
+.hint { color: var(--muted); font-size: 14px; margin-top: -4px; }
+.empty { color: var(--muted); }

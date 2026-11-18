@@ -1,0 +1,11 @@
+# Local LiveKit server for laptop testing only. NOT for the internet:
+# the key below is public. Use LiveKit Cloud (docs/livekit-cloud.md) for real use.
+port: 7880
+rtc:
+  tcp_port: 7881
+  udp_port: 7882        # one UDP port for all media, easy to publish from Docker
+  use_external_ip: false
+keys:
+  devkey: hearthline-local-dev-secret-not-for-production
+logging:
+  level: info

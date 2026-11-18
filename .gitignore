@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+
+# Secrets and local config: never commit these.
+.env
+*.env
+!*.env.example
+households.json
+data/
+*.key.json
+device-key.json

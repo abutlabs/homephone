@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hearthline test phone</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <!-- LiveKit's browser SDK, pinned. -->
+  <script src="https://unpkg.com/livekit-client@2.22.4/dist/livekit-client.umd.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Hearthline</h1>
+      <p class="sub">Laptop test phone · household <strong id="me">…</strong> · <span id="conn" class="pill">connecting</span></p>
+    </header>
+
+    <section id="unlock-box" class="card">
+      <p>Browsers only play sound and use the microphone after a click.</p>
+      <button id="unlock" class="primary">Start test phone</button>
+    </section>
+
+    <section class="card">
+      <h2>Call</h2>
+      <div id="call-state" class="state">Idle</div>
+      <div class="row">
+        <button id="answer" class="primary" hidden>Answer</button>
+        <button id="decline" hidden>Decline</button>
+        <button id="hangup" class="danger" hidden>Hang up</button>
+        <button id="mute" hidden>Mute</button>
+      </div>
+      <div class="meters" id="meters" hidden>
+        <label>You <meter id="lvl-local" min="0" max="1" value="0"></meter></label>
+        <label>Them <meter id="lvl-remote" min="0" max="1" value="0"></meter></label>
+      </div>
+      <div id="audio"></div>
+    </section>
+
+    <section class="card">
+      <h2>Ring a household</h2>
+      <ul id="households" class="list"></ul>
+    </section>
+
+    <section class="card">
+      <h2>Phones online</h2>
+      <p class="hint">Mock phones can be lifted and hung up from here. "Hears" shows how loud your voice arrives at the phone's earpiece.</p>
+      <ul id="phones" class="list"></ul>
+    </section>
+  </main>
+  <script src="/static/ring.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
