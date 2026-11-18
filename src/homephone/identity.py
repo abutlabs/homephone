@@ -4,8 +4,8 @@ Every phone (and later every app install) owns a Polkadot sr25519 account.
 The account is the device's identity:
 
 * it signs the hello message when the phone connects to the ringing server, and
-* (milestone 2) it is the member address stored in the household contract on
-  Polkadot Hub, see ``contracts/HouseholdRegistry.sol``.
+* (M2 and M3) it signs call offers and encrypts call messages; the household
+  owner's Polkadot account certifies it, see ``docs/polkadot.md``.
 
 The secret phrase never leaves the device. It is written to a key file with
 permissions 0600. Only the public address is shared.

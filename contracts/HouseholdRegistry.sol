@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-/// @title HouseholdRegistry (milestone 4 sketch, NOT deployed, NOT audited)
+/// @title HouseholdRegistry (sketch, NOT deployed, NOT audited)
+/// @dev Likely dropped: membership and contacts stay OFF-chain (signed grants
+/// on devices, encrypted on Bulletin) so the family graph is not public. A
+/// revocation list is the only on-chain candidate. See docs/polkadot.md.
 /// @notice Which accounts belong to which household. Stores account addresses
 /// only: no names, no phone numbers, no call records. Targets Polkadot Hub
 /// (testnet first), where msg.sender for a Polkadot account is the H160 that

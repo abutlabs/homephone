@@ -24,7 +24,7 @@ Call a household, not a person. Every phone in that home rings at once, and whoe
 * **The phone** (`src/homephone/phone`) is a Python program for 64-bit Raspberry Pi OS Lite. It watches a hook switch on a GPIO pin, plays a bell on a USB speaker, and carries the call on a USB sound card wired to a handset. In milestone 1, lifting the handset rings one household (a hotline), so no keypad is needed.
 * **The ringing server** (`src/homephone/server`) knows which device belongs to which household, rings all of a household's devices at once, stops the others when one answers, and hands out LiveKit tokens. The LiveKit secret stays on the server.
 * **The laptop test phone** (`src/homephone/web`) is a single web page served by the ringing server. It can call and answer, and it can lift and hang up mock phones.
-* **Polkadot**: every device creates an sr25519 account on first start (`homephone-identity`) and signs in with it. Households move to a contract on Polkadot Hub in milestone 4 ([sketch](contracts/HouseholdRegistry.sol)).
+* **Polkadot**: every device creates an sr25519 account on first start (`homephone-identity`) and signs in with it. The goal is a Polkadot housephone: family members call it from the Polkadot App. Start with [docs/polkadot.md](docs/polkadot.md) and [ROADMAP.md](ROADMAP.md).
 
 More detail: [docs/architecture.md](docs/architecture.md).
 
@@ -63,7 +63,7 @@ Prices are euros including VAT from Dutch and German shops, checked 18 Nov 2026 
 | **A. Lean phone** (recommended) | Pi Zero 2 WH in a plain box. Lift the handset to ring one household. | **~€97** |
 | **B. Dev phone** | Pi 4 or Pi 5: more memory, 4 USB ports, easier to develop on. Optional screw-terminal HAT and keypad. | **~€110 to ~€180** |
 | **C. Vintage phone** (later) | Build A or B moved into a thrifted 1970s–80s desk phone, with a real bell. | **A or B, plus ~€15 to ~€85** |
-| **App only** | Family members without a housephone use the phone app (milestone 3). | **€0** |
+| **App only** | Family members without a housephone use the Polkadot App, with Homephone as a Product inside it. | **€0** |
 
 Two lean phones come to about **€240**, including ~€40 of shared wire, connectors and small tools.
 
@@ -139,7 +139,7 @@ src/homephone/
   phone/             The Pi program: hook switch, audio, ringer, LiveKit, state machine
   server/            Ringing server: households, tokens, call routing
   web/               Laptop test phone (HTML + JS)
-contracts/           Household contract sketch for Polkadot Hub (milestone 4)
+contracts/           Early contract sketch, likely dropped (see docs/polkadot.md)
 deploy/              systemd unit for the Pi, local LiveKit config
 docs/                Pi setup, LiveKit Cloud, architecture
 tests/               Unit and end-to-end tests

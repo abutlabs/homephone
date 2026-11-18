@@ -1,9 +1,10 @@
 """Who belongs to which household.
 
-Milestone 1 keeps this in a JSON file (``households.json``). Milestone 2 swaps
-it for the HouseholdRegistry contract on Polkadot Hub, which stores the same
-thing: household id -> member Polkadot addresses. Keep this interface small so
-that swap is easy.
+Milestone 1 keeps this in a JSON file (``households.json``) on the server. In
+M3 it is replaced by grants signed by household owners' Polkadot accounts and
+checked on each device, so no server knows who belongs to whom (see
+``docs/polkadot.md``).
+Keep this interface small so that swap is easy.
 """
 
 from __future__ import annotations
