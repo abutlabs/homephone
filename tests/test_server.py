@@ -121,14 +121,48 @@ def test_call_nobody_home(client):
         assert recv_type(laptop, "ended")["reason"] == "unavailable"
 
 
-def test_decline_from_only_device_ends_call(client, phone_ident):
-    with client.websocket_connect("/ws") as laptop, client.websocket_connect("/ws") as phone:
-        hello_web(laptop)
-        hello_phone(phone, phone_ident)
-        laptop.send_text(json.dumps({"type": "call", "to": "home"}))
-        ring = recv_type(phone, "ring")
-        phone.send_text(json.dumps({"type": "hangup", "call_id": ring["call_id"]}))
-        assert recv_type(laptop, "ended")["reason"] == "declined"
+async def test_decline_from_only_device_ends_call(config, directory, phone_ident):
+    # A real server on one event loop. TestClient runs each websocket on its own
+    # loop thread, so a ring sent from the laptop's handler to the phone's socket
+    # never wakes the phone's handler, and this test used to hang.
+    import asyncio
+
+    import uvicorn
+    import websockets
+
+    from .test_end_to_end import free_port, wait_for
+
+    port = free_port()
+    server = uvicorn.Server(uvicorn.Config(create_app(config, directory), port=port, log_level="warning"))
+    task = asyncio.create_task(server.serve())
+    await wait_for(lambda: server.started)
+
+    async def until(ws, type_):
+        for _ in range(20):
+            msg = json.loads(await asyncio.wait_for(ws.recv(), 5))
+            if msg["type"] == type_:
+                return msg
+        raise AssertionError(f"no {type_}")
+
+    url = f"ws://127.0.0.1:{port}/ws"
+    try:
+        async with websockets.connect(url) as laptop, websockets.connect(url) as phone:
+            await until(laptop, "challenge")
+            await laptop.send(json.dumps({"type": "hello", "kind": "web", "key": "test-key", "household": "laptop", "name": "Laptop"}))
+            await until(laptop, "welcome")
+            ch = await until(phone, "challenge")
+            await phone.send(json.dumps({
+                "type": "hello", "kind": "phone", "name": phone_ident.name, "address": phone_ident.address,
+                "signature": phone_ident.sign_hello(ch["nonce"]),
+            }))
+            await until(phone, "welcome")
+            await laptop.send(json.dumps({"type": "call", "to": "home"}))
+            ring = await until(phone, "ring")
+            await phone.send(json.dumps({"type": "hangup", "call_id": ring["call_id"]}))
+            assert (await until(laptop, "ended"))["reason"] == "declined"
+    finally:
+        server.should_exit = True
+        await task
 
 
 def test_mock_hook_forwarded_to_mock_phone(client, phone_ident):
