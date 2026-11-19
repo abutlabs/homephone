@@ -1,0 +1,22 @@
+{
+  "name": "@homephone/protocol",
+  "version": "0.1.0",
+  "description": "Homephone call protocol: signed, encrypted ring/offer/answer messages small enough for the Polkadot Statement Store.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@noble/ciphers": "2.4.0",
+    "@noble/curves": "2.4.0",
+    "@noble/hashes": "2.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "typescript": "6.0.3"
+  }
+}

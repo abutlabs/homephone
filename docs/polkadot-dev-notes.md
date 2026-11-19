@@ -12,6 +12,32 @@ A full read of the [Polkadot developer docs](https://developers.polkadot.com/app
 4. ⚠️ **Family members need the test builds.** "The Polkadot releases on Google Play and the App Store connect to a different network and do not work with these docs." The devnet builds are the [Android tester group](https://appdistribution.firebase.dev/i/f3b79521380b40b9), the [APK](https://github.com/Polkadot-Community-Foundation/polkadot-android-community/releases/latest), [TestFlight](https://testflight.apple.com/join/HnBX59vz) and [Desktop](https://github.com/Polkadot-Community-Foundation/polkadot-desktop-community/releases/latest) ([users](https://developers.polkadot.com/apps/using-the-app/users/)).
 5. ⚠️ **Devnet resets wipe accounts.** The September update needed "a fresh account" for everyone. Contacts and messages started over, and everyone needed a new username; `.dot` names survived ([update](https://developers.polkadot.com/apps/updates/2026-09-devnet-update/)). Homephone needs an easy "re-join the household" flow, and we watch the [updates page](https://developers.polkadot.com/apps/updates/2026-10-devnet-update/).
 
+## Verified in the source and on the live chain (20 Nov 2026)
+
+The docs left the biggest questions open, so we read the code: [product-sdk](https://github.com/paritytech/product-sdk) at `@parity/product-sdk@0.39.0` and main, [trinity-user-agents](https://github.com/paritytech/trinity-user-agents) (TrUAPI and the iOS/Android hosts), [polkadot-desktop-community](https://github.com/Polkadot-Community-Foundation/polkadot-desktop-community), and the devnet People chain (1004) over read-only RPC.
+
+| Question | Answer | Evidence |
+|---|---|---|
+| Can a Product do WebRTC voice? | ✅ **Yes.** The App's injected script gates `RTCPeerConnection` behind a TrUAPI `WebRtc` permission and `getUserMedia` behind `Microphone`. Android and iOS grant audio capture under that permission. Our own STUN/TURN servers are allowed. | `trinity-user-agents/js/container` |
+| Does the platform give a Product TURN or the App's call engine? | ❌ No. We bring our own TURN. | TrUAPI method list |
+| Can a Product ring a phone whose App or Product is closed? | ❌ **No.** Product notifications are local only on iOS, Android and Desktop, with no recipient. | `getNotificationManager`, host code |
+| Does Desktop ring for incoming calls? | ✅ **Yes**, while it's running, and it stops when another device answers. | `src/features/call/ui/IncomingCallDetector.tsx` |
+| What does a linked device get when paired? | Its own signing and encryption keys, plus **the owner's chat X25519 private key**. The phone pays its storage allowance and announces it to contacts. The same pairing is used by CLIs. | `rust/crates/truapi/src/host_logic/sso/pairing/v2.rs:82` |
+| Is there a headless host? | ✅ `truapi-host pairing-host` CLI (Linux arm64) and `@parity/truapi-host/node`. It covers pairing only, not chat or calls. | trinity-user-agents |
+| How does the App ring a closed phone? | Call offers are chat messages to every device of the person being called. When the App is backgrounded, the identity backend sends PushKit or FCM. | iOS `Modules/ChatCall`, Android |
+| Can the Pi publish with the SDK as shipped? | ⚠️ Not directly. `StatementStoreClient` has no Node transport (`mode:'local'` throws), so the sidecar plugs in its own, using the terminal's prover. | `product-sdk` statement-store, terminal 0.13.3 / 0.14.0 |
+| Topic | `blake2b-256(utf8(appName))`. `topic2` and `channel` are hashed the same way. | statement-store source |
+| Statement lifetime | `expiry` = (unix seconds << 32) \| sequence. **No maximum TTL** on the chain. A newer statement on the same channel must have a higher expiry, or it's rejected as `channelPriorityTooLow`. | polkadot-sdk `stable2609-2`, live RPC |
+| Size | The SDK caps data at 512 bytes of JSON. The node allows far more; the real cap is the account's `max_size`. | `data.ts:40`, node source |
+| **Allowance sizes** (live chain) | **Lite person: 50 statements / 500 KiB. Full: 200 / 1 MiB. A claimed slot, which is what a paired Pi gets: 2 statements / 500 KiB, lasting about 2–3 days**, up to 20 slots claimed a day. No allowance means `rejected: noAllowance`. | People chain storage, `:statement_allowance:` |
+| Gossip | All three devnet RPC nodes held the same 7,253 statements. | 60 s live subscription |
+
+**What this means for the design:**
+* **Route B's voice works**, but **a Product can't ring a closed App**. With B, family members hear the house ring them only while Homephone is open.
+* **A Pi slot holds just 2 live statements.** The Pi keeps one channel for messages to the other phone and one for messages to its household, each new message replacing the last, with a short real expiry.
+* Slots expire after about 2–3 days. ❓ Can the Pi renew one without the owner's phone? The newer terminal core renews itself, but claiming uses a ring-VRF proof.
+* **Route A′ (the Pi as a linked device) now looks possible.** Desktop shows a linked device can receive calls and ring. A Pi that speaks the same chat and call protocol would ring for **ordinary App calls**, and calls it makes would ring family phones through the platform's own push. The costs: reimplementing Desktop's chat and call modules (a provisional wire format), and the Pi holding the owner's chat key.
+
 ## Statement Store (ringing and call setup)
 
 | Fact | Means for Homephone |

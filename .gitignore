@@ -15,3 +15,6 @@ households.json
 data/
 *.key.json
 device-key.json
+
+# Node
+node_modules/
