@@ -20,9 +20,11 @@ dependencies = [
 [project.optional-dependencies]
 # Real hardware on the Pi: USB audio and GPIO hook switch.
 pi = ["sounddevice>=0.5", "gpiozero>=2.0"]
+# Peer-to-peer call audio (milestone 2; replaces LiveKit).
+webrtc = ["aiortc==1.16.0"]
 # The token and ringing helper (runs on a laptop or a small server).
 server = ["fastapi>=0.110", "uvicorn[standard]>=0.29", "livekit-api>=1.0"]
-dev = ["pytest>=8", "pytest-asyncio>=0.23", "httpx>=0.27", "homephone[server]"]
+dev = ["pytest>=8", "pytest-asyncio>=0.23", "httpx>=0.27", "homephone[server,webrtc]"]
 
 [project.scripts]
 homephone = "homephone.phone.__main__:main"
