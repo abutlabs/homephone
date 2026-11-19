@@ -2,7 +2,7 @@
 
 **Mission:** make a Raspberry Pi in an old landline phone a first-class Polkadot App device, a Polkadot housephone. Family members call it from the Polkadot App they already use, and it rings the house.
 
-Last updated: 18 Nov 2026. Polkadot is the foundation here, not something added later. Read [docs/polkadot.md](docs/polkadot.md) first: it maps every part of Homephone onto the Polkadot platform and compares three ways a Pi can be on Polkadot. [docs/calling-stack.md](docs/calling-stack.md) covers the voice side, including why we don't build on Jami.
+Last updated: 18 Nov 2026. Polkadot is the foundation here, not something added later. Read [docs/polkadot.md](docs/polkadot.md) first: it maps every part of Homephone onto the Polkadot platform and compares three ways a Pi can be on Polkadot. [docs/polkadot-dev-notes.md](docs/polkadot-dev-notes.md) has the facts from a full read of the developer docs, with links. [docs/calling-stack.md](docs/calling-stack.md) covers the voice side, including why we don't build on Jami.
 
 ## Principles
 
@@ -19,10 +19,13 @@ Last updated: 18 Nov 2026. Polkadot is the foundation here, not something added 
 
 Learn the platform by using it, before writing more phone code.
 
-* Install the Polkadot App (devnet build) and claim a username. Pair Polkadot Desktop.
+* Install the Polkadot App **devnet build** ([TestFlight](https://testflight.apple.com/join/HnBX59vz) or the [Android tester group](https://appdistribution.firebase.dev/i/f3b79521380b40b9); the store releases are a different network) and claim a username. Pair Polkadot Desktop.
+* **Voice-in-a-Product test (first, the biggest risk):** can a Product in the mobile App open WebRTC and use the microphone? TrUAPI documents no voice API. Test on iOS and Android separately.
+* **Desktop ringing test:** call an account that is paired with Desktop. Does Desktop ring? If so, study its linked-device protocol as a way for the Pi to ring for ordinary App calls.
+* **Notification test:** can a closed Product alert the phone (`getNotificationManager`)?
 * Register `homephone.dot` on `devnet` and publish a "hello" Product from the [playground template](https://github.com/Polkadot-Community-Foundation/playground-app-template) with `pad`.
 * **Ringing spike:** a Node process on the laptop pairs with your phone (`@parity/product-sdk-auth`), gets a Statement Store allowance slot, and rings the Homephone Product open in the App. The Product answers. Measure the delay, and how long the allowance lasts.
-* **WebRTC spike:** does a Product get the microphone, WebRTC and TURN on iOS and Android?
+* **TURN:** if WebRTC works in a Product, does it get TURN from the platform?
 * **Route C experiment:** run the Android App (vanilla APK) on an emulator to see where it breaks without device attestation.
 * **Start the conversation** with the Polkadot Community Foundation and Parity about enrolling non-phone devices (route A). Ask on [#polkadot-products-public](https://matrix.to/#/#polkadot-products-public:matrix.org) how to get a Statement Store allowance.
 

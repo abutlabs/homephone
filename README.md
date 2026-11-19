@@ -152,6 +152,7 @@ src/homephone/
   web/               Laptop test phone (milestone 1)
 docs/
   polkadot.md        The design: Homephone on Polkadot. Start here
+  polkadot-dev-notes.md  What the Polkadot developer docs say, with links
   calling-stack.md   Voice: WebRTC, NAT traversal, why not Jami
   architecture.md    How the milestone 1 code works
   pi-setup.md        Set up a Pi, step by step
