@@ -41,47 +41,55 @@ A Homephone is a small box that acts as **the telephone exchange for one ordinar
 
 The line board is a few parts on a small prototype board, so **this build needs some soldering**. Why this design, the wiring, and the rules from the datasheet are in **[docs/hardware.md](docs/hardware.md)**. Pi setup is in [docs/pi-setup.md](docs/pi-setup.md).
 
-Prices are euros including VAT, checked **19 Nov 2026**. A ~ marks an estimate. **Stock is tight:** the Pi Zero 2 WH and the AG1171 were both out of stock at most EU shops that day.
+## What you need
 
-### 1. The brain, ~€48
+Two orders per Homephone: **the phone** and **the electronics kit**. Prices include VAT, checked 19 Nov 2026.
 
-| Part | Job | Where | € |
+### 1. The phone: a restored FeTAp 611, €98
+
+The German Bundespost rotary phone of the 1970s: real bell, original rotary dial. We use only this model, so every phone is the same inside ([why](docs/hardware.md#the-phone-fetap-611)).
+
+* **Standard supplier:** [Telefonmanufaktur](https://telefonmanufaktur.de/de/startseite/83-fetap-611-restauriert-designklassiker-in-verschiedenen-farbvarianten.html) (Germany). Restored and tested, new RJ11 cord, 5 colours. €98 + [€16.25 shipping to NL](https://telefonmanufaktur.de/de/content/8-zahlung-und-versand). An EU shop, so no import tax. **Skip their pulse-to-tone converter**; we don't need it.
+* **Cheaper, second-hand:** [Vinted.nl](https://www.vinted.nl/catalog?search_text=fetap%20611) or [Marktplaats](https://www.marktplaats.nl/q/fetap+611/), often €20–50. Usually untested, so the bell or microphone may need work ([restoration guide](https://www.kahlhans.de/telefonseite/galerie/fetap-611/aufbereitung-fetap-611/)).
+
+### 2. The electronics kit: one order at DigiKey, ~€102
+
+Everything below is in **one order at [DigiKey NL](https://www.digikey.nl)**. At checkout choose **UPS or FedEx**: duties and VAT are prepaid, so nothing is due at the door. (With DHL you pay import VAT on delivery.) Shipping is free over €75 before VAT.
+
+| Qty | Part | DigiKey part | € each |
 |---|---|---|---|
-| Raspberry Pi Zero 2 WH (header pre-soldered) | The computer | [Kiwi](https://www.kiwi-electronics.com/en/raspberry-pi-zero-2-w-with-header-20130) (21.16, out of stock) · [BerryBase](https://www.berrybase.de/en/raspberry-pi-zero-2-wh) (20.90, out of stock) | 21 |
-| Official Raspberry Pi micro-USB power supply, 5.1V 2.5A, EU plug | Power for everything | [Kiwi](https://www.kiwi-electronics.com/en/raspberry-pi-psu-5-1v-2-5a-microusb-eu-plug-10809) | 8.46 |
-| 32GB microSD card | Holds the OS | ~any shop | ~6 |
-| Adafruit USB Audio Adapter (#1475) | Voice in and out of the line board | [Opencircuit](https://opencircuit.shop/product/usb-audio-adapter-works-with-raspberry-pi) (9.75, 10–12 days) · [Kiwi](https://www.kiwi-electronics.com/en/usb-audio-adapter-works-with-raspberry-pi-2244) (3.62, back 25 Nov) | 4–10 |
-| Micro-USB OTG adapter (micro-USB to USB-A) | The Zero's one USB port to the sound card | ~any shop | ~3 |
+| 1 | Raspberry Pi Zero 2 WH (header pre-soldered) | [SC0721](https://www.digikey.nl/en/products/detail/raspberry-pi/SC0721/24627135) | 19.34 |
+| 1 | Official Raspberry Pi micro-USB power supply, EU plug (100–240V: works in the US with a plug adapter) | [SC0624](https://www.digikey.nl/en/products/detail/raspberry-pi/SC0624/15298145) | 8.59 |
+| 1 | 32GB microSD card (skip it if you have one) | [MIKROE-5172](https://www.digikey.nl/en/products/detail/mikroelektronika/MIKROE-5172/16528243) | 32.11 |
+| 1 | Adafruit USB Audio Adapter | [1475](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1475/7244940) | 5.31 |
+| 1 | Micro-USB OTG cable | [Adafruit 1099](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1099/5875794) | 2.69 |
+| 1 | **Silvertel AG1171** line interface | [AG1171](https://www.digikey.nl/en/products/detail/silvertel/AG1171/21187236) | 9.14 |
+| 1 | 3.3V 1A regulator | [Traco TSR 1-2433](https://www.digikey.nl/en/products/detail/traco-power/TSR-1-2433/9383776) | 6.74 |
+| 1 | 470µF 16V capacitor | [EEU-FR1C471](https://www.digikey.nl/en/products/detail/panasonic-industry/EEU-FR1C471/2433528) | 0.76 |
+| 2 | 100nF capacitor | [C320C104K5R5TA](https://www.digikey.nl/en/products/detail/kemet/C320C104K5R5TA/818040) | 1.60 |
+| 2 | 10nF capacitor | [C320C103K5R5TA](https://www.digikey.nl/en/products/detail/kemet/C320C103K5R5TA/3726059) | 0.53 |
+| 2 | 1µF capacitor | [C322C105K5R5TA7301](https://www.digikey.nl/en/products/detail/kemet/C322C105K5R5TA7301/18117082) | 1.97 |
+| 4 | 1N4004 diode | [1N4004G](https://www.digikey.nl/en/products/detail/onsemi/1N4004G/1485474) | 0.28 |
+| 1 | 82V protection diode | [P6KE82A](https://www.digikey.nl/en/products/detail/littelfuse-inc/P6KE82A/688097) | 0.81 |
+| 1 | 10k trimmer | [3362P-1-103LF](https://www.digikey.nl/en/products/result?keywords=3362P-1-103LF) | 1.49 |
+| 1 | RJ11 jack (the phone plugs in here) | [MTJ-642BX2](https://www.digikey.nl/en/products/detail/adam-tech/MTJ-642BX2/9832240) | 0.39 |
+| 1 | Prototype board 70 × 50 mm | [Adafruit 4786](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/4786/13617527) | 3.17 |
+| 1 | Jumper wires (one pack is enough for several phones) | [Adafruit 1950](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1950/6827084) | 2.09 |
 
-### 2. The line board, ~€25
+**Stock (19 Nov 2026):** the **Pi Zero 2 WH is out of stock everywhere**; DigiKey expects 420 on 1 Mar 2027. The **AG1171** arrives at DigiKey on 23 Nov (60 units). Everything else is in stock. DigiKey ships what's in stock first and backorders the rest. If the Pi turns up sooner elsewhere (for example [Kiwi](https://www.kiwi-electronics.com/en/search?search=raspberry+pi+zero+2)), buy it there and leave it out of this order.
 
-| Part | Job | Where | € |
-|---|---|---|---|
-| **Silvertel AG1171-S** (or AG1171) | The line interface: line power, ring voltage, hook and dial detection, audio | [Braemac/Symmetry](https://americas.braemac.com/products/silvertel/ag1171s/) ($8.50, 408 in stock, US: add shipping and import VAT) · [Mouser NL](https://nl.mouser.com/ProductDetail/Silvertel/Ag1171S) (7.33, expected 9 Dec) · [Farnell NL](https://nl.farnell.com/en-NL/silvertel/ag1171-s/ringing-slic-low-power-70deg-c/dp/4472677) (8.36 ex VAT, 20 weeks) · plain AG1171 at [DigiKey NL](https://www.digikey.nl/en/products/detail/silvertel/AG1171/21187236) (9.14, 60 due 23 Nov) | ~9 |
-| 3.3V 1A switching regulator, 7805-style (Traco TSR 1-2433 or Recom R-78E3.3-1.0) | Clean power for the AG1171 | [Bürklin](https://www.buerklin.com/en/p/traco-power/dc-dc-converters/tsr-1-2433/26K2076) (5.93 ex VAT; check stock) | ~7 |
-| Capacitors (470µF 16V, 2 × 100nF, 2 × 10nF, 2 × 1µF), 4 × 1N4004, 1 × BZT03C82 or P6KE82, 10k trimmer | Supply, protection, audio | ~Reichelt / TinyTronics | ~5 |
-| RJ11 PCB jack (SparkFun PRT-00132) + breakout (BOB-14021) | Where the phone plugs in | [Kiwi jack](https://www.kiwi-electronics.com/en/rj11-6-pin-connector-2926) (2.11) · [Kiwi breakout](https://www.kiwi-electronics.com/en/sparkfun-rj11-breakout-2925) (3.38) | 5.49 |
-| 5 × 7 cm prototype board | Holds it all | [TinyTronics](https://www.tinytronics.nl/en/tools-and-mounting/prototyping-supplies/experiment-pcbs/experiment-pcb-5cm*7cm-lanes-and-islands) | 0.65 |
+### 3. Tools, once
 
-**Two AG1171 parts exist:** AG1171 and AG1171-S. Silvertel's own link points to the AG1171-S, and [The Phone Friend](https://hackaday.io/project/190181-the-phone-friend) used it. Check the pinout of the part you receive against its datasheet before soldering. Never connect the line board to an outside phone line.
-
-### 3. The phone
-
-**Rule: use phones that others have already taken apart and written up**, so we inherit their fixes ([docs/hardware.md](docs/hardware.md#choosing-the-phone)).
-
-| Phone | Why | Where | € |
-|---|---|---|---|
-| **Original Post Office 746, refurbished** (recommended) | The best-documented phone in Europe: circuit diagrams, conversions and hacker builds. Real rotary dial and bell. Needs a capacitor for the UK "bell wire" to ring on two wires (documented) | [GPO Spares](https://gpospares.co.uk) (UK refurbisher, original moulds) · [eBay.de](https://www.ebay.de/itm/287214345719) (~35–92) · UK dealers (£79–150). From the UK, add import VAT | ~40–90 |
-| Western Electric 500 | The most-hacked phone anywhere, and rings on two wires as is. For family in the US | US sellers | — |
-| GPO Retro 746 (new replica) | New and in 10 colours, but nobody has documented its insides yet. Try one before standardising | [Amazon.nl](https://www.amazon.nl/dp/B008MV7O8K) (53.28) · [bol.com](https://www.bol.com/nl/nl/p/gpo-746rotarybla-telefoon-retro-jaren-70-draaischijf-zwart/9200000047496663/) (65.95–73.95) | 53–74 |
+A soldering iron, solder and a multimeter. The line board needs about 20 solder joints. Never connect it to an outside phone line.
 
 ### What it costs
 
 | | € |
 |---|---|
-| Brain + line board | **~€73** |
-| Plus a refurbished 746 | **~€115–165 per Homephone** |
-| Shared, once: [jumper wires](https://www.kiwi-electronics.com/en/premium-jumperwires-ribbon-40-wires-f-f-20cm-590) (3.01), soldering iron, solder, multimeter | ~€40–70 |
+| Restored FeTAp 611, shipped | ~114 |
+| Electronics kit | ~102 |
+| **One Homephone** | **~€215** |
+| With a second-hand phone and your own SD card | ~€100–125 |
 
 Family members without a housephone use the Polkadot App, for €0.
 

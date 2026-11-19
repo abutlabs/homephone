@@ -85,29 +85,33 @@ Costs, shops and links are in the [README](../README.md#build-a-phone). Per phon
 
 Plus the Pi Zero 2 W, power supply, USB hub and USB sound card from the core kit.
 
-## Choosing the phone
+## The phone: FeTAp 611
 
-**Rule: pick the phones other people have already taken apart and written up.** With the line board, any analog phone should work. The documentation still decides how fast we get past surprises: a bell that won't ring, an odd plug, a worn dial.
+**Our standard phone is the FeTAp 611**, the German Bundespost rotary phone of the 1970s, bought **restored**. One model means every unit is the same inside, so a 3D-printed Pi mount fits every time.
 
-| Phone | Documentation | Fit | Verdict |
-|---|---|---|---|
-| **Original Post Office 746** (UK, 1960s–80s, made in the millions; sold refurbished) | **The deepest of any European phone.** britishtelephones.com has [circuit diagrams, components and versions](https://www.britishtelephones.com/t746.htm) and [conversion guides](https://britishtelephones.com/pstconv1.htm). Hacker builds include [yaymukund](https://blog.yaymukund.com/posts/hacking-a-gpo-746-rotary-phone/) (hook switch on terminals T3/T6, handset wires, D92732 board) and the [2E0WAW intercom](https://www.qsl.net/2e0waw/intercom.htm) (bell rung at ~40V by adding 4.7µF) | Real rotary dial and bell. One **known, documented issue:** it rings through a third "bell wire" (below). Carbon microphone, which the line board handles; an electret insert (type 21A) is a documented upgrade | **Recommended** |
-| **Western Electric 500** (US, 1950s–80s) | Probably the most-hacked phone anywhere: [Pi rotary SIP](https://github.com/mnutt/rotary), [VoIP with antique phones](https://nbailey.ca/post/rotary-phone-voip), [rotary VoIP](https://alexose.blogspot.com/2012/07/the-rotary-voip-phone.html), [Asterisk](https://hackaday.com/2024/03/24/a-dial-phone-sips-asterisk) | Rings on two wires as is. Rare and costly to import into the Netherlands | Recommended for family in the US |
-| **GPO Retro 746** (new replica, about 10 colours) | **None found.** No teardown or wiring write-up for the replica's insides | New, identical units. Unknown bell, dial and ringing wiring | Try one later; don't standardise on it yet |
-| FeTAp 611 (Germany), PTT T65 (Netherlands) | Some: one [FeTAp 611 build](https://hackaday.io/project/165208-an-old-rotary-phone-as-bluetooth-set), mostly German or Dutch forums | Cheap and common locally | Fallback |
+| Why | |
+|---|---|
+| Real vintage, real bell | A genuine Bundespost phone with its mechanical bell and original rotary dial, not a remake |
+| Easy to buy, more than once | [Telefonmanufaktur](https://telefonmanufaktur.de/de/startseite/83-fetap-611-restauriert-designklassiker-in-verschiedenen-farbvarianten.html) (Germany) restores them continuously: €98 incl. VAT, in 5 colours, [€16.25 shipping to NL](https://telefonmanufaktur.de/de/content/8-zahlung-und-versand). An EU shop, so no import tax |
+| Rings on two wires | Telefonmanufaktur fits a new RJ11 cord for use on routers' analog ports, which ring on two wires. That's exactly what the line board provides, so there's no UK-style "bell wire" problem |
+| Documented by others | A [Pi Zero build in a FeTAp 611](https://hackaday.io/project/165208-an-old-rotary-phone-as-bluetooth-set) (dial, hook switch and handset pins), a [restoration guide](https://www.kahlhans.de/telefonseite/galerie/fetap-611/aufbereitung-fetap-611/), [old phones on a FritzBox](https://kleine-technikwelt.de/alte-telefone-an-der-fritzbox.php), and the [historic-telephone forum](https://wasser.de/telefon-alt/forum/) |
+| Made in the millions | Spares and second-hand units are everywhere in the EU, for example on [Vinted.nl](https://www.vinted.nl/catalog?search_text=fetap%20611) and [Marktplaats](https://www.marktplaats.nl/q/fetap+611/) (usually untested) |
 
-Watch out for the two kinds of "GPO 746": the original (D92732 board, screw terminals T1–T19) is the one all of that documentation covers.
+**Don't buy Telefonmanufaktur's pulse-to-tone converter** (€82). The line board reads the rotary dial's pulses directly.
+
+### Other phones
+
+The line board works with any analog phone, but we only design and test for the FeTAp 611. Possible second models later: the Socotel S63 (France, restored by [Le Téléphone Vintage](https://www.letelephonevintage.com/pages/Les_socotel_S63_dispos-5521360.html)) and the original Post Office 746 (UK; best documented at [britishtelephones.com](https://www.britishtelephones.com/t746.htm), but refurbished units come from the UK with import tax, and it needs a capacitor for the UK "bell wire"). We ruled out new "retro" remakes: they're not the real thing, and nobody has documented their insides.
 
 ### Check on each phone
 
-* **It rings on two wires.** UK phones like the 746 ring through a third **"bell wire"** (BT socket pin 3). The UK master socket fed it through a capacitor; without that, the bell stays silent ([aa.net.uk](https://support.aa.net.uk/Bell_wire)). Our jack must recreate it: a capacitor from the line to the bell wire, or the documented strap inside the phone ([britishtelephones.com](https://britishtelephones.com/pstconv1.htm)). Check whether you have a 746 (low-impedance bell) or an 8746 (two 2000Ω coils). US phones ring on two wires as they are.
-* **The plug.** UK phones use a BT plug (adapter to RJ11, or wire to our jack's screw terminals), and old Dutch phones (PTT) a 4-pin PTT plug.
-* **Pulse dialling.** Rotary phones pulse by nature. Push-button phones must be set to tone (DTMF), or to pulse if they have a switch.
-* **Dial contacts** on a phone this old may be dirty. Clean them with paper, not abrasives ([2E0WAW](https://www.qsl.net/2e0waw/intercom.htm)).
+* **Pulse dialling:** the FeTAp 611 pulses (German: IWV), which is what we want.
+* **Dial contacts** on old phones may be dirty. Clean them with paper, not abrasives ([2E0WAW](https://www.qsl.net/2e0waw/intercom.htm)).
+* **Second-hand units** (Vinted, Marktplaats) are usually untested: the bell may need adjusting and the carbon microphone capsule replacing. Both are covered in the restoration guide above.
 
 ## Prototype checklist (M1)
 
-1. Build the line board on stripboard and power it from a bench supply at 3.3V. Plug in an original 746, with the bell-wire capacitor at the jack.
+1. Build the line board on prototype board and power it from a bench supply at 3.3V. Plug in the restored FeTAp 611 by its RJ11 cord.
 2. Hook detection: SHK goes high when the handset is lifted and low when it's replaced.
 3. Rotary dial: count pulses for each digit 0–9, at least 20 times without a miss.
 4. Ringing: the bell rings at 25 Hz with the 1 s on / 4 s off cadence. Lifting the handset mid-ring stops it within 0.5 s.

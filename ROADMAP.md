@@ -34,9 +34,9 @@ Prove the phone hardware and the Pi Zero 2 W with the code already in this repo,
 
 * Done so far: the software, tests, and a Docker setup that runs the whole call on a laptop with a mock phone.
 * Left: the parts arrive after 24 Nov. Build the bench phone ([docs/pi-setup.md](docs/pi-setup.md)) and measure the Zero's memory and CPU.
-* **Line board prototype** ([docs/hardware.md](docs/hardware.md)): build the AG1171 board on prototype board, plug in a refurbished original 746, and work through the prototype checklist: hook, rotary dial, real bell ringing, audio levels, power, echo. Add `Hook` and `Ringer` implementations for the line board behind the phone program's existing interfaces.
+* **Line board prototype** ([docs/hardware.md](docs/hardware.md)): build the AG1171 board on prototype board, plug in a restored FeTAp 611, and work through the prototype checklist: hook, rotary dial, real bell ringing, audio levels, power, echo. Add `Hook` and `Ringer` implementations for the line board behind the phone program's existing interfaces.
 
-**Done when:** an unmodified 746 plugged into the line board rings a laptop when its handset is lifted, the laptop rings the 746's real bell, and both sides hear each other clearly, without echo, for 5 minutes.
+**Done when:** an unmodified FeTAp 611 plugged into the line board rings a laptop when its handset is lifted, the laptop rings the FeTAp's real bell, and both sides hear each other clearly, without echo, for 5 minutes.
 
 ### M2. Ringing over Polkadot (route B)
 
@@ -102,4 +102,4 @@ The Polkadot-side questions, with how to answer each, are in [docs/polkadot.md](
 * aiortc on the Pi Zero 2 W: enough CPU and memory alongside the Node sidecar? (M1, M2)
 * Is echo cancellation needed with a handset? (M1)
 * AG1171 or AG1171-S, and where to buy reliably? Both were out of stock at most EU shops on 19 Nov 2026. (M1)
-* Does the GPO Retro 746 replica ring and dial correctly on the line board? Nobody has documented its insides. (M1)
+* Where in the FeTAp 611 do the Pi and line board fit, and what does the 3D-printed mount look like? (M1)
