@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "homephone"
 version = "0.1.0"
-description = "A homephone for the internet age: a Raspberry Pi in a classic telephone that rings the whole household, built on Polkadot."
+description = "A homephone for the internet age: a Raspberry Pi that turns a classic telephone into a Polkadot housephone."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"

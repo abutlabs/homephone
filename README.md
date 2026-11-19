@@ -1,6 +1,6 @@
 # Homephone
 
-A homephone for the internet age: a Raspberry Pi inside a classic telephone that rings the whole household, built on Polkadot.
+A homephone for the internet age: a Raspberry Pi that turns a classic telephone into a Polkadot housephone and rings the whole household.
 
 Call a household, not a person. Your family rings your home from the Polkadot App on their phones, every phone in the house rings at once, and whoever is nearest picks up, just like the old family landline. Only people you're connected to in the Polkadot App, and have approved, can make it ring. There is no phone network and no Homephone server in the call: Polkadot carries identity, contacts and ringing, and the voice goes directly between the two ends.
 
@@ -9,7 +9,7 @@ Call a household, not a person. Your family rings your home from the Polkadot Ap
 ## How it works
 
 ```
-  Polkadot App (your phone)                              Homephone (Pi in a classic telephone)
+  Polkadot App (your phone)                              Homephone (classic phone + Pi)
   ┌─────────────────────────────┐                        ┌──────────────────────────────────┐
   │ homephone.dot (a Product):  │    pair once (QR)      │ paired with its owner's account  │
   │  set up your home, invite   │───────────────────────►│ handset, hook, dial, bell        │
@@ -21,7 +21,7 @@ Call a household, not a person. Your family rings your home from the Polkadot Ap
 ```
 
 * **The Polkadot App is the app.** Homephone runs inside it as a Polkadot Product, `homephone.dot`. That's where you create your home, pair a phone, invite people and make calls. Your keys stay in the App.
-* **The housephone extends your Polkadot account.** A Pi in an old (or old-looking) telephone pairs with your Polkadot App once, then rings and answers on its own.
+* **The housephone extends your Polkadot account.** A classic phone plugged into a Homephone box pairs with your Polkadot App once, then rings and answers on its own.
 * **Ringing goes over Polkadot.** Ring, answer and hang-up are small signed and encrypted messages on Polkadot's Statement Store.
 * **Only approved contacts can ring your home.** You invite a Polkadot App contact with a link sent in the App chat, they join, and you approve them. Every phone in the house ignores anyone else. [How it works](docs/polkadot.md#who-can-ring-your-home).
 * **Voice goes directly between the two ends** over WebRTC: housephone to housephone, or housephone to the App. A relay is used only when two home networks can't reach each other. Audio never goes through a blockchain.
@@ -30,52 +30,68 @@ The full design, including what's still provisional on Polkadot's side, is in [d
 
 ## Build a phone
 
-Every Homephone is the same small computer inside a telephone you'd want on your hall table: either **a new retro-style phone** or **a real vintage phone**. We keep the handset, hook switch, dial and bell, and replace the phone's own circuit board. It's solder-free where possible: plugs, jumper wires and screw terminals.
+A Homephone is a small box that acts as **the telephone exchange for one ordinary phone**. You plug a classic landline phone into it by its normal cord, unmodified, and its own bell, dial and handset work just as they did on a real line:
 
-Step-by-step setup is in [docs/pi-setup.md](docs/pi-setup.md). The earlier hardware research is in the [hardware doc](https://claude.ai/artifact/A4RnHeqZ5cmp7YKUXtfBv7).
+```
+  classic phone ── phone cord ── [ line board (AG1171) ] ── [ Raspberry Pi Zero 2 W ] ── internet / Polkadot
+  (unchanged)                    makes the line power and     the brain: Polkadot,
+                                 the ~60V that rings the       contacts, calls
+                                 bell; reads hook and dial
+```
 
-Prices are euros including VAT from Dutch and German shops, checked 18 Nov 2026 where a shop is named. A ~ marks an estimate.
+The line board is a few parts on a small prototype board, so **this build needs some soldering**. Why this design, the wiring, and the rules from the datasheet are in **[docs/hardware.md](docs/hardware.md)**. Pi setup is in [docs/pi-setup.md](docs/pi-setup.md).
 
-### The core: same in every phone, ~€55
+Prices are euros including VAT, checked **19 Nov 2026**. A ~ marks an estimate. **Stock is tight:** the Pi Zero 2 WH and the AG1171 were both out of stock at most EU shops that day.
+
+### 1. The brain, ~€48
 
 | Part | Job | Where | € |
 |---|---|---|---|
-| Raspberry Pi Zero 2 WH (header pre-soldered) | The computer | BerryBase (€20.90) or Kiwi | 21 |
-| Micro-USB power supply 2.5A, EU plug | Power | Kiwi | 8.50 |
+| Raspberry Pi Zero 2 WH (header pre-soldered) | The computer | [Kiwi](https://www.kiwi-electronics.com/en/raspberry-pi-zero-2-w-with-header-20130) (21.16, out of stock) · [BerryBase](https://www.berrybase.de/en/raspberry-pi-zero-2-wh) (20.90, out of stock) | 21 |
+| Official Raspberry Pi micro-USB power supply, 5.1V 2.5A, EU plug | Power for everything | [Kiwi](https://www.kiwi-electronics.com/en/raspberry-pi-psu-5-1v-2-5a-microusb-eu-plug-10809) | 8.46 |
 | 32GB microSD card | Holds the OS | ~any shop | ~6 |
-| Micro-USB OTG hub | The Zero has one USB port; the sound card and ringer need two | ~Amazon.nl | ~8 |
-| Adafruit USB Audio Adapter (#1475) | The handset's earpiece and microphone | Kiwi | 3.60 |
-| 2 × 3.5mm plug to screw-terminal adapter | Wires the handset cord to the sound card | ~Amazon.nl | ~8 |
-| **Core** | | | **~55** |
-| Jumper wires, Wago 221 lever connectors, small screwdrivers | Shared, once | ~Amazon.nl | ~40 |
+| Adafruit USB Audio Adapter (#1475) | Voice in and out of the line board | [Opencircuit](https://opencircuit.shop/product/usb-audio-adapter-works-with-raspberry-pi) (9.75, 10–12 days) · [Kiwi](https://www.kiwi-electronics.com/en/usb-audio-adapter-works-with-raspberry-pi-2244) (3.62, back 25 Nov) | 4–10 |
+| Micro-USB OTG adapter (micro-USB to USB-A) | The Zero's one USB port to the sound card | ~any shop | ~3 |
 
-### Pick a phone
+### 2. The line board, ~€25
 
-| Phone | What you get | Add to the core |
-|---|---|---|
-| **A. New retro-style phone** (recommended to start) | A new "vintage" phone, like the classic designs sold by the hundred on Alibaba or in shops. Working parts, consistent between units, easy to buy twice. | **~€20 to ~€60** for the phone, plus a ringer (below) |
-| **B. Real vintage phone** | A thrifted 1970s–80s desk phone. The real thing, but every one is different. | **~€25 to ~€60** for the phone, **~€10 to ~€20** for a new microphone, plus a ringer |
-| **Bench phone** (for development) | A plain box with a retro handset and a magnet switch, for writing code before cutting into a real phone. | ~€30: box, handset, reed switch |
+| Part | Job | Where | € |
+|---|---|---|---|
+| **Silvertel AG1171-S** (or AG1171) | The line interface: line power, ring voltage, hook and dial detection, audio | [Braemac/Symmetry](https://americas.braemac.com/products/silvertel/ag1171s/) ($8.50, 408 in stock, US: add shipping and import VAT) · [Mouser NL](https://nl.mouser.com/ProductDetail/Silvertel/Ag1171S) (7.33, expected 9 Dec) · [Farnell NL](https://nl.farnell.com/en-NL/silvertel/ag1171-s/ringing-slic-low-power-70deg-c/dp/4472677) (8.36 ex VAT, 20 weeks) · plain AG1171 at [DigiKey NL](https://www.digikey.nl/en/products/detail/silvertel/AG1171/21187236) (9.14, 60 due 23 Nov) | ~9 |
+| 3.3V 1A switching regulator, 7805-style (Traco TSR 1-2433 or Recom R-78E3.3-1.0) | Clean power for the AG1171 | [Bürklin](https://www.buerklin.com/en/p/traco-power/dc-dc-converters/tsr-1-2433/26K2076) (5.93 ex VAT; check stock) | ~7 |
+| Capacitors (470µF 16V, 2 × 100nF, 2 × 10nF, 2 × 1µF), 4 × 1N4004, 1 × BZT03C82 or P6KE82, 10k trimmer | Supply, protection, audio | ~Reichelt / TinyTronics | ~5 |
+| RJ11 PCB jack (SparkFun PRT-00132) + breakout (BOB-14021) | Where the phone plugs in | [Kiwi jack](https://www.kiwi-electronics.com/en/rj11-6-pin-connector-2926) (2.11) · [Kiwi breakout](https://www.kiwi-electronics.com/en/sparkfun-rj11-breakout-2925) (3.38) | 5.49 |
+| 5 × 7 cm prototype board | Holds it all | [TinyTronics](https://www.tinytronics.nl/en/tools-and-mounting/prototyping-supplies/experiment-pcbs/experiment-pcb-5cm*7cm-lanes-and-islands) | 0.65 |
 
-**Ringer:** either a small USB speaker hidden inside the phone (Adafruit Mini USB Speaker #3369, €20.25 at Opencircuit), or, for a phone with a real bell, a 12V solenoid that strikes it (Adafruit MOSFET driver #5648, solenoid #412, 12V adapter, ~€23). An old bell needs 40–90V AC to ring by itself; tapping it with a solenoid avoids that.
+**Two AG1171 parts exist:** AG1171 and AG1171-S. Silvertel's own link points to the AG1171-S, and [The Phone Friend](https://hackaday.io/project/190181-the-phone-friend) used it. Check the pinout of the part you receive against its datasheet before soldering. Never connect the line board to an outside phone line.
 
-**A homephone costs about €95–€160**, depending on the phone and ringer. Two come to about €230–€360 including the shared tools. Members without a housephone just use the Polkadot App, for €0.
+### 3. The phone
 
-### Choosing a new retro-style phone
+**Rule: use phones that others have already taken apart and written up**, so we inherit their fixes ([docs/hardware.md](docs/hardware.md#choosing-the-phone)).
 
-They look alike, but check these before buying, and buy **one** to open up first. On Alibaba, minimum orders, shipping and import fees can outweigh the low unit price for a couple of phones. Prices seen at retailers in Nov 2026 were roughly $20–40 for budget models and about $70 for the GPO 746, which has a real rotary dial and bell.
+| Phone | Why | Where | € |
+|---|---|---|---|
+| **Original Post Office 746, refurbished** (recommended) | The best-documented phone in Europe: circuit diagrams, conversions and hacker builds. Real rotary dial and bell. Needs a capacitor for the UK "bell wire" to ring on two wires (documented) | [GPO Spares](https://gpospares.co.uk) (UK refurbisher, original moulds) · [eBay.de](https://www.ebay.de/itm/287214345719) (~35–92) · UK dealers (£79–150). From the UK, add import VAT | ~40–90 |
+| Western Electric 500 | The most-hacked phone anywhere, and rings on two wires as is. For family in the US | US sellers | — |
+| GPO Retro 746 (new replica) | New and in 10 colours, but nobody has documented its insides yet. Try one before standardising | [Amazon.nl](https://www.amazon.nl/dp/B008MV7O8K) (53.28) · [bol.com](https://www.bol.com/nl/nl/p/gpo-746rotarybla-telefoon-retro-jaren-70-draaischijf-zwart/9200000047496663/) (65.95–73.95) | 53–74 |
 
-| Check | Why |
+### What it costs
+
+| | € |
 |---|---|
-| **Not "decorative" or "non-functional"** | Those have no working handset or hook switch inside. |
-| **Rotary dial or push buttons?** | Both work. A real rotary dial sends pulses we count on one GPIO pin. Many "rotary" phones hide push buttons behind a dial-shaped plate; those need a keypad wired to several GPIO pins. Dialing isn't built yet (milestone 1 is "lift the handset to ring one home"). |
-| **Bell or electronic ringer?** | A mechanical bell takes the solenoid ringer. An electronic buzzer is usually replaced by the USB speaker. |
-| **Handset microphone** | Modern phones normally use an electret microphone, which the USB sound card can read directly. Check this on the first unit. Old carbon microphones (phone B) need replacing. |
-| **Room inside** | The Pi Zero, hub and sound card need roughly 8 × 5 × 3 cm, plus the power cable through the old line-cord hole. |
+| Brain + line board | **~€73** |
+| Plus a refurbished 746 | **~€115–165 per Homephone** |
+| Shared, once: [jumper wires](https://www.kiwi-electronics.com/en/premium-jumperwires-ribbon-40-wires-f-f-20cm-590) (3.01), soldering iron, solder, multimeter | ~€40–70 |
+
+Family members without a housephone use the Polkadot App, for €0.
+
+### The bench phone (milestone 1)
+
+The parts already ordered for milestone 1 (a handset, a magnet switch and a USB speaker in a plain box) stay useful for writing and testing the phone software before the line board exists.
 
 ### Which Pi?
 
-The Pi Zero 2 W (512MB) is the default. It should be enough for a voice call, but that hasn't been measured yet; milestone 1 will tell. If it's too small, a Pi 4 or Pi 5 drops in (about €20–60 more, and no USB hub needed). Everything else carries over.
+The Pi Zero 2 W (512MB) is the default. It should be enough for a voice call, but that hasn't been measured yet; milestone 1 will tell. If it's too small, a Pi 4 or Pi 5 drops in (about €20–60 more). Everything else carries over.
 
 ## What's in this repo today (milestone 1)
 
