@@ -18,3 +18,6 @@ device-key.json
 
 # Node
 node_modules/
+
+# Local keys (testnet). Never commit; back up separately.
+.secrets/
