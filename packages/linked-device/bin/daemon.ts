@@ -20,6 +20,8 @@ import { decodeMessages, identityChannel, mainIncoming, StatementData, type Devi
 import { decodeCandidates, decodeMinimalSetup, encodeMinimalSetup } from "../src/minimal-setup.ts";
 import { PeopleRpc, fromHex, toHex } from "../src/people-rpc.ts";
 import { bumpPriority, chatMessage, mainOutgoing } from "../src/send.ts";
+import { keysFromPhrase } from "../src/account.ts";
+import { x25519 } from "@noble/curves/ed25519.js";
 import { decodeStatement } from "../src/statement.ts";
 
 const { values } = parseArgs({
@@ -27,6 +29,7 @@ const { values } = parseArgs({
     session: { type: "string", default: ".secrets/house-device.json" },
     contacts: { type: "string", default: ".secrets/house-contacts.json" },
     "max-offer-age": { type: "string", default: "45" },
+    account: { type: "string" }, // the house account's recovery phrase file: sign as the identity
   },
 });
 
@@ -41,6 +44,19 @@ const own = {
   deviceStmtSecret: fromHex(s.device.stmtSecret),
   deviceEncPriv: fromHex(s.device.encSecret),
 };
+let signer: { secret: Uint8Array; public: Uint8Array } | undefined;
+if (values.account) {
+  const acct = JSON.parse(readFileSync(values.account, "utf8"));
+  const keys = keysFromPhrase(acct.phrase, acct.tld ?? "dot");
+  const sameIdentity = Buffer.from(keys.identityPublic).equals(Buffer.from(own.id));
+  const sameChat = Buffer.from(keys.chatPub).equals(Buffer.from(x25519.getPublicKey(own.chatPriv)));
+  if (!sameIdentity || !sameChat) {
+    log(`the phrase in ${values.account} is not this session's account (identity ${sameIdentity ? "ok" : "MISMATCH"}, chat key ${sameChat ? "ok" : "MISMATCH"})`);
+    process.exit(2);
+  }
+  signer = { secret: keys.identitySecret, public: keys.identityPublic };
+  log(`signing as the house identity ${toHex(keys.identityPublic).slice(0, 12)} (permanent allowance)`);
+}
 const contacts: { username: string; id: string; chatPub: string }[] = JSON.parse(readFileSync(values.contacts!, "utf8"));
 const rpc = await PeopleRpc.connect();
 const maxAgeMs = Number(values["max-offer-age"]) * 1000;
@@ -130,7 +146,7 @@ for (const c of contacts) {
     id: fromHex(c.id),
     chatPub: fromHex(c.chatPub),
     devices: new Map(),
-    out: mainOutgoing(own, { id: fromHex(c.id), chatPub: fromHex(c.chatPub) }),
+    out: mainOutgoing({ ...own, signer }, { id: fromHex(c.id), chatPub: fromHex(c.chatPub) }),
   };
   const idc = identityChannel(own, contact);
   await rpc.subscribe({ matchAny: [toHex(idc.topicIn)] }, (hex) => {

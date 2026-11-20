@@ -171,6 +171,8 @@ def main(argv: list[str] | None = None) -> None:
     p = argparse.ArgumentParser(prog="homephone-app")
     p.add_argument("--session", default=".secrets/house-device.json")
     p.add_argument("--contacts", default=".secrets/house-contacts.json")
+    p.add_argument("--account", default=".secrets/house-account.json",
+                   help="house account recovery phrase file; if present, sign as the house identity (no phone needed)")
     p.add_argument("--mock", nargs="?", const="all", default=os.environ.get("HOMEPHONE_MOCK", ""))
     p.add_argument("--auto-answer", type=float, help="(mock) lift the handset N seconds after it rings")
     p.add_argument("--hangup-after", type=float, help="(mock) hang up N seconds into the call")
@@ -184,6 +186,8 @@ def main(argv: list[str] | None = None) -> None:
                         format="%(asctime)s %(name)s %(message)s", datefmt="%H:%M:%S")
     hook, handset, ringer = build_hardware(args)
     cmd = [node_binary(), str(DAEMON), "--session", args.session, "--contacts", args.contacts]
+    if args.account and (ROOT / args.account).exists():
+        cmd += ["--account", args.account]
     phone = AppPhone(hook, handset, ringer, cmd, args.auto_answer, args.hangup_after)
     try:
         asyncio.run(phone.run())

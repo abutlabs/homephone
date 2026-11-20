@@ -41,9 +41,16 @@ export function nanoid(size = 21): string {
 }
 
 export interface OwnDevice {
-  deviceStmt: Uint8Array;
-  deviceStmtSecret: Uint8Array; // 64-byte sr25519 secret
+  deviceStmt: Uint8Array; // our device id in rosters and topics
+  deviceStmtSecret: Uint8Array; // 64-byte sr25519 secret for deviceStmt
   deviceEncPriv: Uint8Array;
+  /**
+   * Who signs our statements. Receivers only check that the signature is valid
+   * (docs/restore-spec.md §6.1), so this can be the house identity account,
+   * whose Lite allowance (50 statements) never needs renewing. Defaults to the
+   * device key, whose allowance is a slot the house phone renews.
+   */
+  signer?: { secret: Uint8Array; public: Uint8Array };
 }
 
 export function chatMessage(content: Content, messageId: string = crypto.randomUUID()): Uint8Array {
@@ -69,7 +76,8 @@ export function mainOutgoing(own: OwnDevice, peer: { id: Uint8Array; chatPub: Ui
       }));
       const data = enc.encrypt(StatementData.enc({ tag: "multiRequest", value: { encryptedRequest, devicesInfo } }));
       const st: Statement = { expiry: nextExpiry(), channel: requestChannel(topic), topics: [topic], data };
-      return encodeStatement(signStatement(st, own.deviceStmtSecret, own.deviceStmt));
+      const signer = own.signer ?? { secret: own.deviceStmtSecret, public: own.deviceStmt };
+      return encodeStatement(signStatement(st, signer.secret, signer.public));
     },
   };
 }

@@ -22,7 +22,8 @@
     "@noble/curves": "2.4.0",
     "@noble/hashes": "2.4.0",
     "@scure/sr25519": "2.4.0",
-    "qrcode-terminal": "0.12.0"
+    "qrcode-terminal": "0.12.0",
+    "@scure/bip39": "2.4.0"
   },
   "bin": {
     "homephone-pair": "./bin/pair.ts"
