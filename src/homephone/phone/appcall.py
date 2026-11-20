@@ -173,7 +173,9 @@ class AppCall:
 
     def __init__(self, handset: Handset, ice_servers: list[dict] | None = None):
         self.handset = handset
-        self.ice_servers = ice_servers or []
+        # Same public STUN servers Polkadot Desktop uses, so we learn our public
+        # address. TURN comes later (our own coturn); the phone brings its own.
+        self.ice_servers = ice_servers if ice_servers is not None else [{"urls": ["stun:stun.l.google.com:19302"]}]
         self.pc = None
         self.channel = None
         self.on_state: Callable[[str], None] | None = None
