@@ -20,6 +20,15 @@ The receive path (§3.4) now works end to end against **Chrome's libwebrtc**, th
 
 Still to verify against a real phone: Android's actual re-offer (H264 video section, real device audio), and calls from iOS.
 
+**Pairing with a real phone works** (Pixel 8 Pro, devnet App, 20 Nov 2026). `packages/linked-device/bin/pair.ts` implements §1.2 directly (option D, no WASM core) under the host name "Homephone":
+* The phone answered on the pairing topic with Pending, then Success.
+* The owner identity in Success is the account that owns `abutlabs.01` on People 1004.
+* X25519.pub(the chat key we received) equals the `identifier_key` in `Resources.Consumers`.
+* The phone granted the device account the slot allowance in `:statement_allowance:`: `max_count 2`, `max_size 512000`.
+* Our statement codec and sr25519 check also decode, re-encode and verify all 6,160 live statements on devnet People.
+
+Next: device sync (§4), which the phone runs only with hosts named "Polkadot Desktop".
+
 ## Sources and notation
 
 All paths are relative to the scratchpad ``.
