@@ -41,17 +41,17 @@ Prove the phone hardware and the Pi Zero 2 W with the code already in this repo,
 
 **Done when:** an unmodified FeTAp 611 plugged into the line board rings a laptop when its handset is lifted, the laptop rings the FeTAp's real bell, and both sides hear each other clearly, without echo, for 5 minutes.
 
-### M2. Ringing over Polkadot (route B)
+### M2. The house answers Polkadot App calls *(working on a laptop, 20 Nov 2026)*
 
-The Pi joins Polkadot as an extension of its owner's account.
+**Changed on 20 Nov 2026.** The source review showed a better path than our own `homephone.dot` Product (route B): the house has **its own Polkadot account** (for example `landline.01`), and people call it with the App's normal Call button. The Pi speaks the App's own chat and call protocol ([docs/linked-device-spec.md](docs/linked-device-spec.md)).
 
-* **`homephone-dot`**, a Node sidecar on the Pi, pairs with the owner's App and holds the Statement Store allowance slot. It publishes and receives encrypted, signed ring, offer, answer and hangup statements: primary topic `homephone`, `topic2` = household inbox. The compact offer is about 210 bytes. Rings repeat until answered, and the callee acknowledges.
-* **The Python phone program** keeps the hook, ringer and audio, uses aiortc for WebRTC, and talks to the sidecar over a local socket.
-* **The `homephone.dot` Product** calls and answers with the browser's WebRTC.
-* **TURN:** the platform's if Products get it (an M0 answer), otherwise our own coturn as a fallback.
-* The ringing server and LiveKit are removed.
+* **Done:** a call from `abutlabs.01` to `landline.01` rang the house phone program. It answered, and audio went both ways through the phone's relay, with no Homephone server and no LiveKit.
+  * Pieces: `packages/linked-device` (pairing, chat, MinimalSetup, sending); `bin/daemon.ts` (`homephone-dot`); `phone/appcall.py` and `appbridge.py` (aiortc, hook, ringer, handset).
+* **Now:** remove the extra phone. Today the Pi is a *linked device* of the house account, which still needs the house account's phone (Android Private Space for the test) to renew its allowance. **Next, the Pi restores the house account from its recovery phrase** and signs as the account itself, which has its own permanent allowance (50 statements). A phone is then needed only once, to create the account.
+* **Then:** outgoing calls (speed dial), our own TURN server (coturn) for hard NATs, and running it on the Pi Zero 2 W (memory).
+* `homephone.dot` (route B) stays as the fallback, and as a later setup page.
 
-**Done when:** the Pi in one home and the Polkadot App in another ring each other and talk clearly for 5 minutes. The Pi on a phone hotspot forces a hard NAT. No Homephone server is involved in setting up the call.
+**Done when:** an unmodified FeTAp 611 on the line board rings when someone calls the house account from the Polkadot App, lifting the handset answers, and both sides talk clearly for 5 minutes, with only the Pi running at home.
 
 ### M3. Households and contacts
 
