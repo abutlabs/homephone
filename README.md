@@ -1,8 +1,8 @@
 # Homephone
 
-A homephone for the internet age: a Raspberry Pi that turns a classic telephone into a Polkadot housephone and rings the whole household.
+A homephone for the internet age: a Raspberry Pi that turns a classic telephone into a Polkadot housephone.
 
-Call a household, not a person. Your family rings your home from the Polkadot App on their phones, every phone in the house rings at once, and whoever is nearest picks up, just like the old family landline. Only people you're connected to in the Polkadot App, and have approved, can make it ring. There is no phone network and no Homephone server in the call: Polkadot carries identity, contacts and ringing, and the voice goes directly between the two ends.
+The old family landline but only people you're connected to in the Polkadot App, and have approved, can make it ring. There is no monthly bill: Polkadot carries identity, and contacts.
 
 **Status:** testnet only and early. The design is set (below and in [docs/polkadot.md](docs/polkadot.md)). The code in this repo today is the milestone 1 hardware harness, which proves the phone hardware with a temporary server. See [ROADMAP.md](ROADMAP.md).
 
@@ -43,7 +43,7 @@ The line board is a few parts on a small prototype board, so **this build needs 
 
 ## What you need
 
-Two orders per Homephone: **the phone** and **the electronics kit**. Prices include VAT, checked 19 Nov 2026.
+Three orders per Homephone: **the phone**, **the Pi** and **the line-board parts**. Prices include VAT, checked 20 Nov 2026.
 
 ### 1. The phone: a restored FeTAp 611, €98
 
@@ -52,17 +52,27 @@ The German Bundespost rotary phone of the 1970s: real bell, original rotary dial
 * **Standard supplier:** [Telefonmanufaktur](https://telefonmanufaktur.de/de/startseite/83-fetap-611-restauriert-designklassiker-in-verschiedenen-farbvarianten.html) (Germany). Restored and tested, new RJ11 cord, 5 colours. €98 + [€16.25 shipping to NL](https://telefonmanufaktur.de/de/content/8-zahlung-und-versand). An EU shop, so no import tax. **Skip their pulse-to-tone converter**; we don't need it.
 * **Cheaper, second-hand:** [Vinted.nl](https://www.vinted.nl/catalog?search_text=fetap%20611) or [Marktplaats](https://www.marktplaats.nl/q/fetap+611/), often €20–50. Usually untested, so the bell or microphone may need work ([restoration guide](https://www.kahlhans.de/telefonseite/galerie/fetap-611/aufbereitung-fetap-611/)).
 
-### 2. The electronics kit: one order at DigiKey, ~€102
+### 2. The Pi: one order at welectron (Germany), ~€44
 
-Everything below is in **one order at [DigiKey NL](https://www.digikey.nl)**. At checkout choose **UPS or FedEx**: duties and VAT are prepaid, so nothing is due at the door. (With DHL you pay import VAT on delivery.) Shipping is free over €75 before VAT.
+[welectron](https://www.welectron.com/Raspberry-Pi-Zero-2-W-with-Headers) is an EU shop, so no import tax. Add the extras on the Pi's page with **"Konfigurieren + Kaufen"**.
+
+| Qty | Part | Why | € |
+|---|---|---|---|
+| 1 | [Raspberry Pi Zero 2 W **with Headers**](https://www.welectron.com/Raspberry-Pi-Zero-2-W-with-Headers) (RP1-120009) | The line board connects to the GPIO pins; this saves soldering a 40-pin header | 20.90 |
+| 1 | Official Raspberry Pi micro-USB power supply 5.1 V / 2.5 A (EU) | Stable power; cheap supplies cause audio crackle and resets. 100–240 V, so it works in the US with a plug adapter | 6.90 |
+| 1 | Raspberry Pi Zero accessory set (USB-OTG, mini-HDMI adapter, header) | The OTG adapter connects the USB sound card; mini-HDMI for debugging | 4.90 |
+| 1 | Heatsink set | The Zero gets warm encoding calls | 1.30 |
+| 1 | microSD card, 32 GB, A1 or A2 (Raspberry Pi or SanDisk) | The operating system. Skip it if you have one | ~9 |
+
+**Stock (20 Nov 2026):** welectron lists both Zero 2 W versions as *im Zulauf* (incoming, no date), so check the delivery estimate before paying. DigiKey expects the Zero 2 WH on 1 Mar 2027. Until one arrives, everything can be developed on a laptop or a Pi 4.
+
+### 3. The line-board parts: one order at DigiKey, ~€47
+
+Everything below is in **one order at [DigiKey NL](https://www.digikey.nl)**. At checkout choose **UPS or FedEx**: duties and VAT are prepaid, so nothing is due at the door. (With DHL you pay import VAT on delivery.) Shipping is free over €75 before VAT, so ordering parts for two phones at once avoids the shipping charge.
 
 | Qty | Part | DigiKey part | € each |
 |---|---|---|---|
-| 1 | Raspberry Pi Zero 2 WH (header pre-soldered) | [SC0721](https://www.digikey.nl/en/products/detail/raspberry-pi/SC0721/24627135) | 19.34 |
-| 1 | Official Raspberry Pi micro-USB power supply, EU plug (100–240V: works in the US with a plug adapter) | [SC0624](https://www.digikey.nl/en/products/detail/raspberry-pi/SC0624/15298145) | 8.59 |
-| 1 | 32GB microSD card (skip it if you have one) | [MIKROE-5172](https://www.digikey.nl/en/products/detail/mikroelektronika/MIKROE-5172/16528243) | 32.11 |
-| 1 | Adafruit USB Audio Adapter | [1475](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1475/7244940) | 5.31 |
-| 1 | Micro-USB OTG cable | [Adafruit 1099](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1099/5875794) | 2.69 |
+| 1 | Adafruit USB Audio Adapter (the handset's mic and earpiece) | [1475](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1475/7244940) | 5.31 |
 | 1 | **Silvertel AG1171** line interface | [AG1171](https://www.digikey.nl/en/products/detail/silvertel/AG1171/21187236) | 9.14 |
 | 1 | 3.3V 1A regulator | [Traco TSR 1-2433](https://www.digikey.nl/en/products/detail/traco-power/TSR-1-2433/9383776) | 6.74 |
 | 1 | 470µF 16V capacitor | [EEU-FR1C471](https://www.digikey.nl/en/products/detail/panasonic-industry/EEU-FR1C471/2433528) | 0.76 |
@@ -75,10 +85,14 @@ Everything below is in **one order at [DigiKey NL](https://www.digikey.nl)**. At
 | 1 | RJ11 jack (the phone plugs in here) | [MTJ-642BX2](https://www.digikey.nl/en/products/detail/adam-tech/MTJ-642BX2/9832240) | 0.39 |
 | 1 | Prototype board 70 × 50 mm | [Adafruit 4786](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/4786/13617527) | 3.17 |
 | 1 | Jumper wires (one pack is enough for several phones) | [Adafruit 1950](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1950/6827084) | 2.09 |
+| 1 | Project box, about 120 × 65 × 40 mm (the Pi and line board sit next to the phone) | [Hammond 1591CSBK](https://www.digikey.nl/en/products/result?keywords=1591CSBK) | ~6 |
+| 1 | M2.5 nylon standoffs and screws (mount the Pi and board in the box) | [Adafruit 3299](https://www.digikey.nl/en/products/result?keywords=adafruit%203299) | ~2 |
 
-**Stock (19 Nov 2026):** the **Pi Zero 2 WH is out of stock everywhere**; DigiKey expects 420 on 1 Mar 2027. The **AG1171** arrives at DigiKey on 23 Nov (60 units). Everything else is in stock. DigiKey ships what's in stock first and backorders the rest. If the Pi turns up sooner elsewhere (for example [Kiwi](https://www.kiwi-electronics.com/en/search?search=raspberry+pi+zero+2)), buy it there and leave it out of this order.
+**Stock (19 Nov 2026):** the **AG1171** arrives at DigiKey on 23 Nov (60 units). Everything else is in stock.
 
-### 3. Tools, once
+The Pi and line board go in the box **next to the phone**; the phone plugs into the box with its normal cord and is never opened. A Pi Zero has been fitted inside a FeTAp 611 before ([Hackaday](https://hackaday.io/project/165208/components)), so an inside mount is possible later, once we've measured the space.
+
+### 4. Tools, once
 
 A soldering iron, solder and a multimeter. The line board needs about 20 solder joints. Never connect it to an outside phone line.
 
@@ -87,9 +101,10 @@ A soldering iron, solder and a multimeter. The line board needs about 20 solder 
 | | € |
 |---|---|
 | Restored FeTAp 611, shipped | ~114 |
-| Electronics kit | ~102 |
-| **One Homephone** | **~€215** |
-| With a second-hand phone and your own SD card | ~€100–125 |
+| The Pi (welectron), plus their shipping | ~44 + shipping |
+| Line-board parts (DigiKey), plus shipping under €75 | ~47 + shipping |
+| **One Homephone** | **~€205, plus shipping** |
+| With a second-hand phone and your own SD card | ~€110–135, plus shipping |
 
 Family members without a housephone use the Polkadot App, for €0.
 
