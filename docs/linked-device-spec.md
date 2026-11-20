@@ -11,6 +11,15 @@ Read-only source study, 2026-11-20. Nothing was built or run; the cloned code wa
 - it hangs up;
 - second priority, it places outgoing audio calls.
 
+## Verified on 20 Nov 2026
+
+The receive path (§3.4) now works end to end against **Chrome's libwebrtc**, the same library the App's phones use: `tests/test_appcall.py::test_pi_answers_a_libwebrtc_caller`. Headless Chrome plays the Android caller: a data channel through `MinimalSetup`, then an audio+video re-offer over the data channel. The Pi answers audio sendrecv and video inactive, and audio flows both ways. Two findings:
+
+1. **Send only the sha-256 fingerprint in every later SDP.** The first answer reaches the caller as `MinimalSetup`, which carries only sha-256. aiortc lists sha-256, sha-384 and sha-512. If the media answer over the data channel keeps all three, libwebrtc reads a different one, decides the certificate changed, and closes DTLS. The call drops a moment after it starts. `appcall.only_sha256_fingerprint` fixes this.
+2. **Match the callers' RTC config in tests.** Desktop and Android use the default `balanced` bundle policy. With `max-bundle`, Chrome rejects the template answer, because it has no BUNDLE line.
+
+Still to verify against a real phone: Android's actual re-offer (H264 video section, real device audio), and calls from iOS.
+
 ## Sources and notation
 
 All paths are relative to the scratchpad ``.
