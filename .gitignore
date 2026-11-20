@@ -21,3 +21,4 @@ node_modules/
 
 # Local keys (testnet). Never commit; back up separately.
 .secrets/
+.bulletin-deploy/
