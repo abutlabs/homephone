@@ -27,7 +27,15 @@ Still to verify against a real phone: Android's actual re-offer (H264 video sect
 * The phone granted the device account the slot allowance in `:statement_allowance:`: `max_count 2`, `max_size 512000`.
 * Our statement codec and sr25519 check also decode, re-encode and verify all 6,160 live statements on devnet People.
 
-Next: device sync (§4), which the phone runs only with hosts named "Polkadot Desktop".
+**First real call answered on the house phone** (20 Nov 2026, 02:12).
+* Setup: `abutlabs.01` (Pixel) called the house account `landline.01`. The house account was created in Android Private Space on the same Pixel, and the laptop (standing in for the Pi) is paired to it as "Homephone".
+* The Pi needed **no device sync and no "Polkadot Desktop" name.** It learned the caller's phone device keys from the identity channel (`deviceChatAccepted`), which it computes from on-chain keys alone.
+* The house phone fanned the Pi out to the caller, so the offer was wrapped for the Pi.
+* `appbridge.py` rang and auto-answered after 3 s. The daemon's answer was accepted (`statement_submit` → `new`).
+* ICE connected through the phone's relay. The audio renegotiation over the data channel completed.
+* Audio went both ways: the caller heard the test beeps, and the Pi measured the caller's voice.
+
+**Next, to remove the extra phone:** the house *identity* account has its own Statement Store allowance from Lite personhood: 50 statements / 500 KiB in `:statement_allowance:`, with no hourly renewal. If the Pi restores the house account from its recovery phrase and signs as the identity account (as Android phones do, since their statement account is the identity account), it needs no linked-device slot and no phone running. A phone is needed only once, to create the attested account.
 
 ## Sources and notation
 
