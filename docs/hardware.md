@@ -32,7 +32,7 @@ We first planned to open each phone and wire its handset, hook switch, dial and 
 | Microphone | Electret only; carbon mics sound poor | **Any**, including carbon |
 | Dial | Rotary only, wired per model | **Rotary** (pulses on one pin) **and push-button** (tones decoded in software) |
 | Works with | One model at a time | **Any analog landline phone** |
-| Cost | Solder-free modules | A small board with a few parts and some soldering |
+| Cost | Solder-free modules | About 13 small parts on a breadboard; no soldering |
 
 ## The AG1171
 
@@ -45,8 +45,8 @@ The [Silvertel AG1171](https://www.silvertel.com/telecom/271-ag1171.html) ([data
 | 3 | F/R | Pi GPIO 22 (output). Toggled at 20–25 Hz while ringing; held high otherwise |
 | 4 | RM | Pi GPIO 27 (output). High only while ringing |
 | 5 | SHK | Pi GPIO 17 (input). High = handset lifted; pulses while a rotary digit is dialled. Internal 3.3k pull-up |
-| 9 | VIN | Sound card **headphone out** (left), through a 1µF capacitor |
-| 10 | VOUT | Sound card **mic in**, through a 1µF capacitor and a 10k trimmer to set the level |
+| 9 | VIN | Sound card **headphone out** (tip), through a **10nF** capacitor (datasheet value) |
+| 10 | VOUT | Through a **100nF** capacitor (datasheet value; VOUT needs a load of at least 10kΩ) to one end of a **10k trimmer**, whose other end goes to ground. The trimmer's middle leg goes through a **1µF** capacitor to the sound card **mic in** (tip). The 1µF keeps the mic input's bias voltage off the trimmer |
 | 12 | GND | Ground (shared with the Pi) |
 | 13 | +V | **3.3V from its own regulator** (see below), with 470µF + 100nF to ground |
 | 14 | PD | **Leave unconnected.** Never drive it high; it can damage the module |
@@ -56,7 +56,7 @@ The [Silvertel AG1171](https://www.silvertel.com/telecom/271-ag1171.html) ([data
 
 * **Run it at 3.3V.** At 3.3V its logic matches the Pi's pins: inputs need ≥2.0V and SHK outputs 2.8V. At 5V, SHK outputs 4.5V, which would damage a Pi pin, and the Pi's 3.3V outputs are below its 3.5V input threshold.
 * **Give it its own 3.3V regulator.** It draws 70–105 mA idle, up to 450 mA with the handset lifted and up to 500 mA while ringing, at 3.3V. That's more than the Pi's 3.3V pin should supply, and the datasheet stresses a clean supply (absolute maximum 7V). Blue POT uses a separate 3.3V switching regulator with 470µF. Its builder also found the inrush current trips small fuses.
-* **Protection is not optional.** Use at minimum the datasheet's circuit: four 1N4004 diodes steering tip and ring into an **82V clamp diode (BZT03C82 or P6KE82)**, and 10nF from tip and ring to ground. Blue POT: "Do not omit including the protection circuitry … as the AG1171 can be damaged." Never connect it to an outside phone line.
+* **Protection is not optional for regular use.** The datasheet's minimum circuit (Figure 4): two 1N4004s from **ground to tip and to ring** (stripe at the line), two 1N4004s from **tip and ring to a shared node** (stripe at the node), and an **82V clamp diode (P6KE82 or BZT03C82) from that node to ground** (stripe at the node). Silvertel: "the minimum overvoltage protection that should be used"; Blue POT: "Do not omit including the protection circuitry … as the AG1171 can be damaged." Optional: 1–10nF from tip and ring to ground against noise from the DC/DC converter (Figure 5). Never connect it to an outside phone line.
 * **Ringing:** set RM high, toggle F/R at 20–25 Hz in the ring cadence, then hold F/R high and drop RM. **RM may be high at most 33% of the time** (absolute maximum). The Dutch cadence of 1 s ringing, 4 s silence is 20%.
 * **Answering while ringing ("ring trip"):** SHK pulses when the handset is lifted mid-ring. Debounce it for 10 ms, then set F/R high, and drop RM between 10 and 500 ms later.
 * **Dialling:** rotary digits arrive as SHK pulses (about 10 per second). Debounce each edge for ~10 ms and count pulses until a ~200 ms gap. Push-button phones send tones, decoded from the VOUT audio in software.
@@ -67,23 +67,23 @@ The AG1171 converts the phone's 2-wire line to separate in and out audio (a "hyb
 
 ## Parts
 
-Costs, shops and links are in the [README](../README.md#build-a-phone). Per phone:
+Shops, DigiKey part numbers and the step-by-step breadboard wiring are in the [README](../README.md#what-you-need). Per phone:
 
 | Part | Qty | Notes |
 |---|---|---|
 | Silvertel AG1171 | 1 | The line interface |
 | 3.3V 1A switching regulator, 7805-style pinout (e.g. Traco TSR 1-2433 or Recom R-78E3.3-1.0) | 1 | Powers the AG1171 only |
 | 470µF 16V electrolytic capacitor | 1 | On the AG1171 supply |
-| 100nF ceramic capacitors | 2 | Supply decoupling |
-| 10nF ceramic capacitors | 2 | Tip and ring to ground |
-| 1µF film or ceramic capacitors | 2 | Audio in and out |
+| 100nF ceramic capacitors | 2 | Supply decoupling, VOUT coupling |
+| 10nF ceramic capacitors | 2 | VIN coupling (one spare, or tip/ring noise filter) |
+| 1µF ceramic capacitors | 2 | Mic coupling (one spare) |
 | 1N4004 diodes | 4 | Protection bridge |
 | BZT03C82 or P6KE82 clamp diode | 1 | Protection, 82V |
 | 10k trimmer | 1 | Microphone level |
-| RJ11 (6P4C) PCB jack | 1 | Where the phone plugs in |
-| Stripboard ~5 × 7 cm, pin headers, jumper wires | 1 | Prototype board |
+| Wall socket with screw terminals (original Post socket or TAE-F) | 1 | Where the phone plugs in |
+| Breadboard, jumper wires, 2 × 3.5mm cables with bare ends, WAGO 221-412 | 1 | Prototype board: no soldering |
 
-Plus the Pi Zero 2 W, power supply, USB hub and USB sound card from the core kit.
+Plus the Pi (a Pi 3 Model B for the prototype, a Zero 2 W for the final phone), its power supply and a USB sound card.
 
 ## The phone: FeTAp 611
 
@@ -111,7 +111,7 @@ The line board works with any analog phone, but we only design and test for the 
 
 ## Prototype checklist (M1)
 
-1. Build the line board on prototype board and power it from a bench supply at 3.3V. Plug in the restored FeTAp 611 by its RJ11 cord.
+1. Build the line board on a breadboard, step by step as in the [README](../README.md#wire-the-line-board), and check 3.3V before connecting the AG1171. Plug in the FeTAp 611 through a wall socket with screw terminals. `scripts/linetest.py` tests hook, ringing and dialling.
 2. Hook detection: SHK goes high when the handset is lifted and low when it's replaced.
 3. Rotary dial: count pulses for each digit 0–9, at least 20 times without a miss.
 4. Ringing: the bell rings at 25 Hz with the 1 s on / 4 s off cadence. Lifting the handset mid-ring stops it within 0.5 s.

@@ -2,197 +2,237 @@
 
 A homephone for the internet age: a Raspberry Pi that turns a classic telephone into a Polkadot housephone.
 
-The old family landline but only people you're connected to in the Polkadot App, and have approved, can make it ring. There is no monthly bill: Polkadot carries identity, and contacts.
+The old family landline, but only people you're connected to in the Polkadot App, and have approved, can make it ring. There is no monthly bill: Polkadot carries identity and contacts.
 
-**Status:** testnet only and early. The design is set (below and in [docs/polkadot.md](docs/polkadot.md)). The code in this repo today is the milestone 1 hardware harness, which proves the phone hardware with a temporary server. See [ROADMAP.md](ROADMAP.md).
+**Status:** testnet only and early. A real Polkadot App call has been answered by the house phone program with two-way audio (on a laptop standing in for the Pi). The phone hardware is being built now. See [ROADMAP.md](ROADMAP.md).
 
 ## How it works
 
 ```
-  Polkadot App (your phone)                              Homephone (classic phone + Pi)
-  ┌─────────────────────────────┐                        ┌──────────────────────────────────┐
-  │ homephone.dot (a Product):  │    pair once (QR)      │ paired with its owner's account  │
-  │  set up your home, invite   │───────────────────────►│ handset, hook, dial, bell        │
-  │  contacts, call, answer     │                        │                                  │
-  └──────────────┬──────────────┘                        └────────────────┬─────────────────┘
-                 │   ring / answer: signed, encrypted messages             │
-                 └────────────► Polkadot Statement Store ◄────────────────┘
-                 ◄═════════ voice: WebRTC, device to device (relay only if needed) ═════════►
+ Polkadot App (anyone's phone)                         Homephone (classic phone + Pi)
+ ┌──────────────────────────┐   normal App call       ┌──────────────────────────────┐
+ │ contact: "landline.01"   │────────────────────────►│ Pi: answers as the house     │
+ │ (your house's account)   │   signalling: Polkadot  │ FeTAp 611: real bell, dial,  │
+ └──────────────────────────┘   voice: direct WebRTC  │ handset                      │
+                                                      └──────────────────────────────┘
 ```
 
-* **The Polkadot App is the app.** Homephone runs inside it as a Polkadot Product, `homephone.dot`. That's where you create your home, pair a phone, invite people and make calls. Your keys stay in the App.
-* **The housephone extends your Polkadot account.** A classic phone plugged into a Homephone box pairs with your Polkadot App once, then rings and answers on its own.
-* **Ringing goes over Polkadot.** Ring, answer and hang-up are small signed and encrypted messages on Polkadot's Statement Store.
-* **Only approved contacts can ring your home.** You invite a Polkadot App contact with a link sent in the App chat, they join, and you approve them. Every phone in the house ignores anyone else. [How it works](docs/polkadot.md#who-can-ring-your-home).
-* **Voice goes directly between the two ends** over WebRTC: housephone to housephone, or housephone to the App. A relay is used only when two home networks can't reach each other. Audio never goes through a blockchain.
+* **Your house has its own Polkadot account**, for example `landline.01`. People add it as a contact and press **Call** in the Polkadot App, like calling a person.
+* **The Pi answers as the house.** It speaks the Polkadot App's own chat and call protocol, so the real bell rings and lifting the handset answers.
+* **Only the house's contacts can call it.** The App only allows calls between accepted contacts.
+* **Voice goes directly between the two ends** (WebRTC). Calls are set up over Polkadot; audio never goes through a blockchain.
 
-The full design, including what's still provisional on Polkadot's side, is in [docs/polkadot.md](docs/polkadot.md). The voice stack and the alternatives we ruled out are in [docs/calling-stack.md](docs/calling-stack.md).
+Details: [docs/polkadot.md](docs/polkadot.md) (the design), [docs/linked-device-spec.md](docs/linked-device-spec.md) (the App's call protocol), [docs/restore-spec.md](docs/restore-spec.md) (house account keys).
 
 ## Build a phone
 
-A Homephone is a small box that acts as **the telephone exchange for one ordinary phone**. You plug a classic landline phone into it by its normal cord, unmodified, and its own bell, dial and handset work just as they did on a real line:
+The phone stays **completely original**. You build a tiny telephone exchange, a "line board", and the phone plugs into it with its normal cord:
 
 ```
-  classic phone ── phone cord ── [ line board (AG1171) ] ── [ Raspberry Pi Zero 2 W ] ── internet / Polkadot
-  (unchanged)                    makes the line power and     the brain: Polkadot,
-                                 the ~60V that rings the       contacts, calls
-                                 bell; reads hook and dial
+ FeTAp 611 (untouched) ── phone cord ── [ line board ] ── [ Raspberry Pi ] ── Wi-Fi ── Polkadot
+                                         powers the line,   the brain: calls,
+                                         rings the bell,    contacts, Polkadot
+                                         reads hook & dial
 ```
 
-The line board is a few parts on a small prototype board, so **this build needs some soldering**. Why this design, the wiring, and the rules from the datasheet are in **[docs/hardware.md](docs/hardware.md)**. Pi setup is in [docs/pi-setup.md](docs/pi-setup.md).
+**No soldering.** Everything pushes into a breadboard. The Pi and line board fit in a box next to the phone (a cigar box works: at least 18 × 13 × 4.5 cm inside).
 
 ## What you need
 
-Three orders per Homephone: **the phone**, **the Pi** and **the line-board parts**. Prices include VAT, checked 20 Nov 2026.
+Prices include VAT unless noted, checked 23 Nov 2026.
 
-### 1. The phone: a restored FeTAp 611, €98
+### 1. The phone: FeTAp 611
 
-The German Bundespost rotary phone of the 1970s: real bell, original rotary dial. We use only this model, so every phone is the same inside ([why](docs/hardware.md#the-phone-fetap-611)).
+The German Bundespost rotary phone of the 1970s. Every Homephone uses this model, so they're all the same inside ([why](docs/hardware.md#the-phone-fetap-611)).
 
-* **Standard supplier:** [Telefonmanufaktur](https://telefonmanufaktur.de/de/startseite/83-fetap-611-restauriert-designklassiker-in-verschiedenen-farbvarianten.html) (Germany). Restored and tested, new RJ11 cord, 5 colours. €98 + [€16.25 shipping to NL](https://telefonmanufaktur.de/de/content/8-zahlung-und-versand). An EU shop, so no import tax. **Skip their pulse-to-tone converter**; we don't need it.
-* **Cheaper, second-hand:** [Vinted.nl](https://www.vinted.nl/catalog?search_text=fetap%20611) or [Marktplaats](https://www.marktplaats.nl/q/fetap+611/), often €20–50. Usually untested, so the bell or microphone may need work ([restoration guide](https://www.kahlhans.de/telefonseite/galerie/fetap-611/aufbereitung-fetap-611/)).
+* **Restored and tested:** [Telefonmanufaktur](https://telefonmanufaktur.de/de/startseite/83-fetap-611-restauriert-designklassiker-in-verschiedenen-farbvarianten.html), €98 + €16.25 shipping. Skip their pulse-to-tone converter.
+* **Second-hand:** [Vinted](https://www.vinted.nl/catalog?search_text=fetap%20611) or [Marktplaats](https://www.marktplaats.nl/q/fetap+611/), €20–60. Ask the seller whether **the bell rings** and **both handset capsules** are present. Originals have "Deutsche Bundespost" underneath.
+* **A wall socket with screw terminals** for the phone's plug: the original Post socket (often sold with the phone), or a TAE-F surface socket (~€4, hardware store). Two of its terminals connect to the breadboard.
 
-### 2. The Pi: one order at welectron (Germany), ~€44
+### 2. The Pi
 
-[welectron](https://www.welectron.com/Raspberry-Pi-Zero-2-W-with-Headers) is an EU shop, so no import tax. Add the extras on the Pi's page with **"Konfigurieren + Kaufen"**.
+* **Prototype: Raspberry Pi 3 Model B**, second-hand (~€25 on Marktplaats, often with SD card and case).
+* **Final: Raspberry Pi Zero 2 W with header.** Sold out across the EU until about Feb–Mar 2027. Then add a USB OTG cable ([DigiKey 1528-1585-ND](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1099/5875794)) and a 32–64 GB microSD card from a regular shop (not DigiKey: their SD cards cost €50).
 
-| Qty | Part | Why | € |
-|---|---|---|---|
-| 1 | [Raspberry Pi Zero 2 W **with Headers**](https://www.welectron.com/Raspberry-Pi-Zero-2-W-with-Headers) (RP1-120009) | The line board connects to the GPIO pins; this saves soldering a 40-pin header | 20.90 |
-| 1 | Official Raspberry Pi micro-USB power supply 5.1 V / 2.5 A (EU) | Stable power; cheap supplies cause audio crackle and resets. 100–240 V, so it works in the US with a plug adapter | 6.90 |
-| 1 | Raspberry Pi Zero accessory set (USB-OTG, mini-HDMI adapter, header) | The OTG adapter connects the USB sound card; mini-HDMI for debugging | 4.90 |
-| 1 | Heatsink set | The Zero gets warm encoding calls | 1.30 |
-| 1 | microSD card, 32 GB, A1 or A2 (Raspberry Pi or SanDisk) | The operating system. Skip it if you have one | ~9 |
+### 3. Everything else: one DigiKey order, ~€61 before VAT
 
-**Stock (20 Nov 2026):** welectron lists both Zero 2 W versions as *im Zulauf* (incoming, no date), so check the delivery estimate before paying. DigiKey expects the Zero 2 WH on 1 Mar 2027. Until one arrives, everything can be developed on a laptop or a Pi 4.
+Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at checkout so duties are prepaid. Delivery is free over €75 before VAT. Paste this into the cart's **Bulk Add** box:
 
-### 3. The line-board parts: one order at DigiKey, ~€47
+```
+1, 5061-AG1171-ND
+1, 1951-2742-ND
+1, P14394-ND
+2, 399-4264-ND
+2, 399-9772-ND
+2, 399-C322C105K5R5TA7301CT-ND
+10, 1N4004GOS-ND
+1, P6KE82ALFCT-ND
+1, 3362P-103LF-ND
+1, 1528-239-ND
+1, 1528-1160-ND
+1, 1528-1154-ND
+1, 2648-SC0624-ND
+1, 1528-1475-ND
+2, 839-053-0282R-ND
+4, 2946-221-412-ND
+```
 
-Everything below is in **one order at [DigiKey NL](https://www.digikey.nl)**. At checkout choose **UPS or FedEx**: duties and VAT are prepaid, so nothing is due at the door. (With DHL you pay import VAT on delivery.) Shipping is free over €75 before VAT, so ordering parts for two phones at once avoids the shipping charge.
+| Qty | Part | What it does |
+|---|---|---|
+| 1 | **Silvertel AG1171** | **The exchange on a chip.** Powers the phone line, makes the ~60 V that rings the bell, and tells the Pi when the handset is lifted or the dial turns |
+| 1 | Traco TSR 1-2433 regulator | Turns the Pi's 5 V into the clean 3.3 V the AG1171 needs |
+| 1 | 470 µF capacitor | A small power reservoir for the bursts the AG1171 draws while ringing |
+| 2 | 100 nF capacitor | One smooths the power; one passes the caller's voice from the AG1171 to the mic level knob |
+| 2 | 10 nF capacitor | One passes your voice from the Pi into the AG1171 (the other is a spare) |
+| 2 | 1 µF capacitor | Keeps the sound card's mic voltage away from the level knob (the other is a spare) |
+| 10 | 1N4004 diode | Protection on the phone wires (4 used; 10 cost less than 4) |
+| 1 | P6KE82A protection diode | Clamps any surge on the phone wires above 82 V |
+| 1 | 10 kΩ trimmer | **The mic level knob**: how loud you sound to the other person. Set once with a screwdriver |
+| 1 | Breadboard | Everything pushes into it: no soldering |
+| 1 + 1 | Jumper wires (female-male, male-male) | Pi pins to breadboard, and links on the breadboard |
+| 1 | Official Pi power supply (micro-USB) | Powers the Pi and the line board |
+| 1 | USB sound card | Gives the Pi an earpiece output and a microphone input |
+| 2 | 3.5 mm audio cable, bare end | Sound card to breadboard (strip the free end) |
+| 4 | WAGO 221-412 lever connector | Joins each stripped audio wire to a jumper wire |
 
-| Qty | Part | DigiKey part | € each |
-|---|---|---|---|
-| 1 | Adafruit USB Audio Adapter (the handset's mic and earpiece) | [1475](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1475/7244940) | 5.31 |
-| 1 | **Silvertel AG1171** line interface | [AG1171](https://www.digikey.nl/en/products/detail/silvertel/AG1171/21187236) | 9.14 |
-| 1 | 3.3V 1A regulator | [Traco TSR 1-2433](https://www.digikey.nl/en/products/detail/traco-power/TSR-1-2433/9383776) | 6.74 |
-| 1 | 470µF 16V capacitor | [EEU-FR1C471](https://www.digikey.nl/en/products/detail/panasonic-industry/EEU-FR1C471/2433528) | 0.76 |
-| 2 | 100nF capacitor | [C320C104K5R5TA](https://www.digikey.nl/en/products/detail/kemet/C320C104K5R5TA/818040) | 1.60 |
-| 2 | 10nF capacitor | [C320C103K5R5TA](https://www.digikey.nl/en/products/detail/kemet/C320C103K5R5TA/3726059) | 0.53 |
-| 2 | 1µF capacitor | [C322C105K5R5TA7301](https://www.digikey.nl/en/products/detail/kemet/C322C105K5R5TA7301/18117082) | 1.97 |
-| 4 | 1N4004 diode | [1N4004G](https://www.digikey.nl/en/products/detail/onsemi/1N4004G/1485474) | 0.28 |
-| 1 | 82V protection diode | [P6KE82A](https://www.digikey.nl/en/products/detail/littelfuse-inc/P6KE82A/688097) | 0.81 |
-| 1 | 10k trimmer | [3362P-1-103LF](https://www.digikey.nl/en/products/result?keywords=3362P-1-103LF) | 1.49 |
-| 1 | RJ11 jack (the phone plugs in here) | [MTJ-642BX2](https://www.digikey.nl/en/products/detail/adam-tech/MTJ-642BX2/9832240) | 0.39 |
-| 1 | Prototype board 70 × 50 mm | [Adafruit 4786](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/4786/13617527) | 3.17 |
-| 1 | Jumper wires (one pack is enough for several phones) | [Adafruit 1950](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1950/6827084) | 2.09 |
-| 1 | Project box, about 120 × 65 × 40 mm (the Pi and line board sit next to the phone) | [Hammond 1591CSBK](https://www.digikey.nl/en/products/result?keywords=1591CSBK) | ~6 |
-| 1 | M2.5 nylon standoffs and screws (mount the Pi and board in the box) | [Adafruit 3299](https://www.digikey.nl/en/products/result?keywords=adafruit%203299) | ~2 |
+### 4. Tools
 
-**Stock (19 Nov 2026):** the **AG1171** arrives at DigiKey on 23 Nov (60 units). Everything else is in stock.
+A **multimeter**, a **wire stripper** (or careful scissors) and a **small screwdriver**.
 
-The Pi and line board go in the box **next to the phone**; the phone plugs into the box with its normal cord and is never opened. A Pi Zero has been fitted inside a FeTAp 611 before ([Hackaday](https://hackaday.io/project/165208/components)), so an inside mount is possible later, once we've measured the space.
+## Wire the line board
 
-### 4. Tools, once
+Unplug the Pi's power whenever you add or move parts. Do one step at a time, and do the check before going on.
 
-A soldering iron, solder and a multimeter. The line board needs about 20 solder joints. Never connect it to an outside phone line.
+**The breadboard:** the long numbered **columns** (1–63) each connect the 5 holes in their half (rows a–e, or f–j). The **rails** along the top and bottom edges connect along their whole length: we use **+ for 3.3 V** and **− for ground**.
 
-### What it costs
+**Pi pins** (the 40-pin header; pin 1 is the corner nearest the SD card, pins 1, 3, 5… on the inner row):
 
-| | € |
-|---|---|
-| Restored FeTAp 611, shipped | ~114 |
-| The Pi (welectron), plus their shipping | ~44 + shipping |
-| Line-board parts (DigiKey), plus shipping under €75 | ~47 + shipping |
-| **One Homephone** | **~€205, plus shipping** |
-| With a second-hand phone and your own SD card | ~€110–135, plus shipping |
+```
+  3.3V [ 1][ 2] 5V      ◄── step 1: 5 V to the regulator
+       [ 3][ 4]
+       [ 5][ 6] GND     ◄── step 1: ground rail
+       [ 7][ 8]
+       [ 9][10]
+GPIO17 [11][12]         ◄── step 3: hook (SHK)
+GPIO27 [13][14] GND
+GPIO22 [15][16]         ◄── step 3: ringing (RM on 13, F/R on 15)
+```
 
-Family members without a housephone use the Polkadot App, for €0.
+**The whole circuit:**
 
-### The bench phone (milestone 1)
+```
+ Pi 5V ──► [TSR 1-2433] ──► 3.3 V rail ─────────────┬─────────┬──► AG1171 pin 13 (+V)
+           (pin 2 = GND)                             470µF+   100nF
+                                                     │         │
+ Pi GND ─────────────────── ground rail ─────────────┴─────────┴──► AG1171 pin 12 (GND)
 
-The parts already ordered for milestone 1 (a handset, a magnet switch and a USB speaker in a plain box) stay useful for writing and testing the phone software before the line board exists.
+ Pi GPIO17 ◄── AG1171 pin 5 (SHK)     Pi GPIO27 ──► pin 4 (RM)     Pi GPIO22 ──► pin 3 (F/R)
 
-### Which Pi?
+ sound card HEADPHONE (tip) ──[10nF]──► AG1171 pin 9 (VIN)          cable sleeves ──► ground
+ sound card MIC (tip) ◄──[1µF]── trimmer middle  ┤ trimmer ├ one end ◄──[100nF]── AG1171 pin 10 (VOUT)
+                                                           other end ──► ground
 
-The Pi Zero 2 W (512MB) is the default. It should be enough for a voice call, but that hasn't been measured yet; milestone 1 will tell. If it's too small, a Pi 4 or Pi 5 drops in (about €20–60 more). Everything else carries over.
+ phone socket a ◄── AG1171 pin 2 (TIP)     phone socket b ◄── AG1171 pin 1 (RING)
+ AG1171 pins 6, 7, 8, 11 and 14: leave empty.
+```
 
-## What's in this repo today (milestone 1)
+### Step 1: power
 
-Milestone 1 proves the phone hardware: hook switch, handset audio, ringer, and the Pi Zero. To test that before the Polkadot pieces exist, it uses a **temporary** ringing server and [LiveKit](https://livekit.io) for voice. Both are removed in milestone 2, when ringing moves to Polkadot ([ROADMAP.md](ROADMAP.md)).
+1. **Regulator:** push the TSR 1-2433 into **c3, c4, c5**, printed side facing you (pin 1 = input on the left, pin 2 = ground, pin 3 = 3.3 V out).
+2. **Jumpers (male-male):** **a4 → top − rail**; **a5 → top + rail**.
+3. **Link the rails:** top + to bottom +, and top − to bottom −, at the left end.
+4. **From the Pi (female-male):** **Pi pin 2 (5 V) → b3**; **Pi pin 6 (GND) → top − rail**.
 
-* **The phone** (`src/homephone/phone`) is a Python program for 64-bit Raspberry Pi OS Lite. It watches the hook switch on a GPIO pin, rings the ringer, and carries the call on the USB sound card. Lifting the handset rings one household (a hotline), so no dial is needed yet. This program stays. In milestone 2 it gets direct WebRTC and talks to a small Polkadot sidecar.
-* **Device identity** (`src/homephone/identity.py`): every phone creates its own Polkadot sr25519 key on first start (`homephone-identity`).
-* **The ringing server** (`src/homephone/server`) and **laptop test page** (`src/homephone/web`) are temporary, for testing only.
+**Check:** power the Pi. The multimeter between **top + and top −** reads **3.2–3.4 V**. Unplug again.
 
-More detail: [docs/architecture.md](docs/architecture.md).
+### Step 2: the AG1171
 
-### Try it on your laptop (no Pi, no accounts)
+1. Push the AG1171 into **row j**, pin 1 at **column 20**, its pins pointing down into the board. Each pin gets its own column; there's a gap with no pins, which is normal. **Write each pin's column on a strip of masking tape** below the board. The steps below say "the pin 13 column" and so on.
+2. **Pin 13 column → bottom + rail** (male-male jumper). **Pin 12 column → bottom − rail.**
+3. **470 µF:** long leg (+) in the **pin 13 column**, short leg (stripe, −) in the **bottom − rail**. The stripe side must go to −.
+4. **100 nF:** one leg in the **pin 13 column**, the other in the **bottom − rail**.
+5. Leave **pin 14** (PD) and pins 6, 7, 8, 11 **empty**.
 
-You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine on Linux). This runs a local LiveKit server, the ringing server, and a pretend Pi phone whose microphone sends short beeps.
+**Check:** power the Pi. Still 3.2–3.4 V on the rails, and nothing gets warm. Unplug.
+
+### Step 3: Pi control and the phone
+
+1. **Female-male jumpers from the Pi:** **pin 11 (GPIO17) → pin 5 column**; **pin 13 (GPIO27) → pin 4 column**; **pin 15 (GPIO22) → pin 3 column**.
+2. **Phone line:** a jumper from the **pin 2 column (TIP)** and one from the **pin 1 column (RING)** to the two line terminals of the phone socket: **a and b**, or on a TAE socket terminals **1 and 2**. Plug in the phone.
+
+**Check, on the Pi:**
 
 ```sh
-git clone https://github.com/abutlabs/homephone.git
-cd homephone
-docker compose up
+python3 scripts/linetest.py hook    # lift → "lifted", replace → "on hook"
+python3 scripts/linetest.py ring    # the real bell rings 3 times; lift the handset to stop it
+python3 scripts/linetest.py dial    # lift, dial 4 → "digit 4"
 ```
 
-Then open **http://localhost:8080/?key=letmein&household=laptop** and click **Start test phone**.
+### Step 4: audio
 
-* **Call the Pi:** click **Call** next to *home*. The mock phone rings; click **Lift handset** under *Phones online*. You hear its beeps, and its *hears* meter moves when you speak.
-* **The Pi calls you:** click **Lift handset** while nothing is ringing. After a short dial tone the phone rings your laptop; click **Answer**.
-* **Run the tests**, including a real two-phone call through LiveKit: `docker compose --profile test run --rm test`
+1. **Strip the cables:** cut back the outer jacket of each 3.5 mm cable's free end by 3 cm. Inside are a **tip** wire, a **ring** wire and a **shield (sleeve)**. With the multimeter's beep mode, find which wire connects to the plug's **tip** (the very end of the plug). Strip 1 cm of the tip wire and the shield, and **twist and fold each one double** so the WAGO grips firmly. Tape the unused ring wire out of the way.
+2. **Your voice to the phone (headphone):** plug cable 1 into the sound card's **headphone** jack (green). **WAGO** its tip wire to a male-male jumper into **column 40, top half**. Put the **10 nF** between **column 40** and **column 42**. Jumper **column 42 → the pin 9 (VIN) column**. **WAGO** the shield to a jumper into the **top − rail**.
+3. **The caller's voice to the Pi (mic):** jumper the **pin 10 (VOUT) column → column 46, top half**. Put the **100 nF** between **column 46** and **column 48**. Push the **trimmer** into **columns 48, 49, 50**, middle leg in 49; bend the legs gently if needed. Jumper **column 50 → top − rail**. Put the **1 µF** between **column 49** and **column 53**. Plug cable 2 into the **mic** jack (pink): **WAGO** its tip wire to a jumper into **column 53**, and its shield to a jumper into the **top − rail**.
 
-Stop everything with `docker compose down`. The images are the public build from `ghcr.io/abutlabs/homephone`. If they can't be pulled yet, Docker builds them from this folder.
-
-### With a real Pi
-
-Use LiveKit Cloud's free tier ([docs/livekit-cloud.md](docs/livekit-cloud.md)) or the Docker LiveKit on your laptop, then follow [docs/pi-setup.md](docs/pi-setup.md).
+**Check, on the Pi:**
 
 ```sh
-cp .env.example .env       # fill in LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET
-python -m venv .venv && . .venv/bin/activate
-pip install -e ".[server]"
-set -a; . ./.env; set +a
-homephone-server run       # prints the link to the laptop test page
+aplay -l                                            # note the USB sound card's number, e.g. card 1
+speaker-test -D plughw:1 -c 1 -t sine -f 440 -l 1   # lift the handset: you hear a tone
+arecord -D plughw:1 -f S16_LE -r 48000 -d 5 test.wav && aplay -D plughw:1 test.wav
+                                                    # speak into the handset, then hear it played back
 ```
 
-## Repository
+If your voice is too quiet or distorted, turn the **trimmer** a little with the screwdriver and try again. `alsamixer` also sets the sound card's levels.
 
-```
-src/homephone/
-  identity.py        Polkadot device key (create, sign, verify)
-  phone/             The Pi program: hook switch, audio, ringer, call state machine
-  protocol.py        Messages to the temporary ringing server (milestone 1)
-  server/            Temporary ringing server (milestone 1)
-  web/               Laptop test phone (milestone 1)
-docs/
-  polkadot.md        The design: Homephone on Polkadot. Start here
-  polkadot-dev-notes.md  What the Polkadot developer docs say, with links
-  calling-stack.md   Voice: WebRTC, NAT traversal, why not Jami
-  architecture.md    How the milestone 1 code works
-  pi-setup.md        Set up a Pi, step by step
-  livekit-cloud.md   LiveKit for milestone 1 tests
-contracts/           Early contract sketch, likely dropped (see docs/polkadot.md)
-deploy/              systemd unit for the Pi, local LiveKit config
-tests/               Unit and end-to-end tests
-compose.yaml         Laptop test setup
-```
+### Step 5: protection
+
+Add this before regular use. It protects the AG1171 from static and spikes on the phone wires (datasheet Figure 4). **The stripe on a diode is its cathode.** Pick a free bottom-half column near the AG1171 and call it **column X**.
+
+| Part | Plain end → | Striped end → |
+|---|---|---|
+| 1N4004 | bottom − rail | pin 2 (TIP) column |
+| 1N4004 | bottom − rail | pin 1 (RING) column |
+| 1N4004 | pin 2 (TIP) column | column X |
+| 1N4004 | pin 1 (RING) column | column X |
+| P6KE82A | bottom − rail | column X |
+
+**Check:** the hook, ring, dial and audio tests above still work.
+
+**Safety:** while ringing, the phone wires carry about 60 V AC: low current, but it stings. Don't touch the pin 1 and 2 columns or the socket while it rings, and **never connect the line board to a real phone line**.
+
+## Software
+
+The Pi runs two programs that talk over a pipe:
+
+* **`homephone-dot`** (`packages/linked-device`, Node 22+) is the Polkadot side. It pairs with the house account, receives App calls and sends answers.
+* **The phone program** (`src/homephone/phone`, Python) is the hardware side: the bell, hook, dial and handset audio, plus WebRTC voice with aiortc.
+
+Pairing, the house account and running it are in [docs/linked-device-spec.md](docs/linked-device-spec.md) and `packages/linked-device/bin/`. The older milestone-1 test setup (a temporary server and LiveKit, for testing hardware without Polkadot) is described in [docs/architecture.md](docs/architecture.md).
 
 ## Development
 
 ```sh
 python -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
-pytest                                        # fast tests, no LiveKit needed
-docker compose --profile test run --rm test   # adds the real LiveKit call test
-homephone --mock                              # a mock phone in your terminal (Enter lifts/hangs up)
+pytest                          # Python tests, incl. a call against headless Chrome if installed
+npm install && npm test         # Node tests (Node 22.18+)
+```
+
+## Repository
+
+```
+packages/linked-device/   The Pi's Polkadot side: pairing, chat, call setup (TypeScript)
+packages/protocol/        Our own call protocol (fallback route)
+packages/product/         The homephone.dot page
+src/homephone/phone/      The phone program: hook, ringer, audio, WebRTC
+scripts/linetest.py       Line-board tests (hook, ring, dial)
+docs/                     Design, hardware, Polkadot notes
 ```
 
 ## Keys and secrets
 
-* Your Polkadot keys stay in the Polkadot App on your phone. A housephone never sees them; pairing gives it its own limited permission to send ringing messages.
-* Each phone's own key is in `~/.config/homephone/device-key.json` (mode 600) and never leaves the device. Only its public address is shared.
-* Milestone 1 only: the LiveKit API secret lives in the server's `.env`, which git ignores. The key in `deploy/livekit-dev.yaml` and `compose.yaml` is for the local test LiveKit and is public on purpose. Never expose that setup to the internet.
+Everything secret lives in `.secrets/`, which git ignores: the house account's recovery phrase, the Pi's pairing keys and the `homephone.dot` owner key. Back them up offline; never commit them.
 
 ## License
 
