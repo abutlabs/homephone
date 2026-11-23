@@ -54,9 +54,9 @@ The German Bundespost rotary phone of the 1970s. Every Homephone uses this model
 * **Prototype: Raspberry Pi 3 Model B**, second-hand (~€25 on Marktplaats, often with SD card and case).
 * **Final: Raspberry Pi Zero 2 W with header.** Sold out across the EU until about Feb–Mar 2027. Then add a USB OTG cable ([DigiKey 1528-1585-ND](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1099/5875794)) and a 32–64 GB microSD card from a regular shop (not DigiKey: their SD cards cost €50).
 
-### 3. Everything else: one DigiKey order, ~€61 before VAT
+### 3. Everything else: one DigiKey order, ~€68 before VAT
 
-Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at checkout so duties are prepaid. Delivery is free over €75 before VAT. Paste this into the cart's **Bulk Add** box:
+Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at checkout so duties are prepaid. Delivery is free over €75 before VAT; adding the final Pi (`1, 2648-SC0721-ND`, backordered to about March 2027) gets you there. Paste this into the cart's **Bulk Add** box:
 
 ```
 1, 5061-AG1171-ND
@@ -71,6 +71,7 @@ Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at
 1, 1528-239-ND
 1, 1528-1160-ND
 1, 1528-1154-ND
+1, 1528-1424-ND
 1, 2648-SC0624-ND
 1, 1528-1475-ND
 2, 839-053-0282R-ND
@@ -89,7 +90,8 @@ Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at
 | 1 | P6KE82A protection diode | Clamps any surge on the phone wires above 82 V |
 | 1 | 10 kΩ trimmer | **The mic level knob**: how loud you sound to the other person. Set once with a screwdriver |
 | 1 | Breadboard | Everything pushes into it: no soldering |
-| 1 + 1 | Jumper wires (female-male, male-male) | Pi pins to breadboard, and links on the breadboard |
+| 1 | **Pi T-Cobbler Plus** (assembled) | A ribbon cable that brings all 40 Pi pins onto the breadboard, **labelled** (5V, GND, GPIO17…) |
+| 1 + 1 | Jumper wires (male-male, female-male) | Links on the breadboard (the female-male ones are spares) |
 | 1 | Official Pi power supply (micro-USB) | Powers the Pi and the line board |
 | 1 | USB sound card | Gives the Pi an earpiece output and a microphone input |
 | 2 | 3.5 mm audio cable, bare end | Sound card to breadboard (strip the free end) |
@@ -105,18 +107,9 @@ Unplug the Pi's power whenever you add or move parts. Do one step at a time, and
 
 **The breadboard:** the long numbered **columns** (1–63) each connect the 5 holes in their half (rows a–e, or f–j). The **rails** along the top and bottom edges connect along their whole length: we use **+ for 3.3 V** and **− for ground**.
 
-**Pi pins** (the 40-pin header; pin 1 is the corner nearest the SD card, pins 1, 3, 5… on the inner row):
+**The Pi connects through the T-Cobbler.** Push the T-Cobbler into the **left end** of the breadboard, straddling the middle channel (it takes about columns 1–22). Connect its ribbon cable to the Pi's 40-pin header with the cable's **coloured stripe at pin 1**, the corner of the header nearest the SD card. Every Pi pin now has a **labelled column** on the breadboard: **5V, GND, GPIO17, GPIO27, GPIO22**. The steps below say "the 5V column" and so on.
 
-```
-  3.3V [ 1][ 2] 5V      ◄── step 1: 5 V to the regulator
-       [ 3][ 4]
-       [ 5][ 6] GND     ◄── step 1: ground rail
-       [ 7][ 8]
-       [ 9][10]
-GPIO17 [11][12]         ◄── step 3: hook (SHK)
-GPIO27 [13][14] GND
-GPIO22 [15][16]         ◄── step 3: ringing (RM on 13, F/R on 15)
-```
+If a rail's red or blue line has a **gap in the middle** of the board, the two halves aren't connected: bridge each gap with a short jumper.
 
 **The whole circuit:**
 
@@ -138,16 +131,16 @@ GPIO22 [15][16]         ◄── step 3: ringing (RM on 13, F/R on 15)
 
 ### Step 1: power
 
-1. **Regulator:** push the TSR 1-2433 into **c3, c4, c5**, printed side facing you (pin 1 = input on the left, pin 2 = ground, pin 3 = 3.3 V out).
-2. **Jumpers (male-male):** **a4 → top − rail**; **a5 → top + rail**.
-3. **Link the rails:** top + to bottom +, and top − to bottom −, at the left end.
-4. **From the Pi (female-male):** **Pi pin 2 (5 V) → b3**; **Pi pin 6 (GND) → top − rail**.
+1. **Regulator:** push the TSR 1-2433 into **c26, c27, c28**, printed side facing you (pin 1 = input on the left, pin 2 = ground, pin 3 = 3.3 V out).
+2. **Jumpers:** **a27 → top − rail**; **a28 → top + rail**.
+3. **Link the rails:** top + to bottom +, and top − to bottom −, at the right end.
+4. **From the T-Cobbler:** the **5V column → b26**; a **GND column → top − rail**.
 
 **Check:** power the Pi. The multimeter between **top + and top −** reads **3.2–3.4 V**. Unplug again.
 
 ### Step 2: the AG1171
 
-1. Push the AG1171 into **row j**, pin 1 at **column 20**, its pins pointing down into the board. Each pin gets its own column; there's a gap with no pins, which is normal. **Write each pin's column on a strip of masking tape** below the board. The steps below say "the pin 13 column" and so on.
+1. Push the AG1171 into **row j**, pin 1 at **column 30**, its pins pointing down into the board. Each pin gets its own column; there's a gap with no pins, which is normal. **Write each pin's column on a strip of masking tape** below the board. The steps below say "the pin 13 column" and so on.
 2. **Pin 13 column → bottom + rail** (male-male jumper). **Pin 12 column → bottom − rail.**
 3. **470 µF:** long leg (+) in the **pin 13 column**, short leg (stripe, −) in the **bottom − rail**. The stripe side must go to −.
 4. **100 nF:** one leg in the **pin 13 column**, the other in the **bottom − rail**.
@@ -157,7 +150,7 @@ GPIO22 [15][16]         ◄── step 3: ringing (RM on 13, F/R on 15)
 
 ### Step 3: Pi control and the phone
 
-1. **Female-male jumpers from the Pi:** **pin 11 (GPIO17) → pin 5 column**; **pin 13 (GPIO27) → pin 4 column**; **pin 15 (GPIO22) → pin 3 column**.
+1. **Jumpers from the T-Cobbler:** the **GPIO17 column → pin 5 (SHK) column**; **GPIO27 → pin 4 (RM) column**; **GPIO22 → pin 3 (F/R) column**.
 2. **Phone line:** a jumper from the **pin 2 column (TIP)** and one from the **pin 1 column (RING)** to the two line terminals of the phone socket: **a and b**, or on a TAE socket terminals **1 and 2**. Plug in the phone.
 
 **Check, on the Pi:**
