@@ -96,7 +96,7 @@ Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at
 
 ### 4. Tools
 
-A **multimeter**, a **wire stripper** (or careful scissors) and a **small screwdriver**.
+A **multimeter** and a **small screwdriver**. Nothing needs stripping or soldering.
 
 ## Wire the line board
 
