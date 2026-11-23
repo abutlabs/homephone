@@ -47,14 +47,14 @@ The German Bundespost rotary phone of the 1970s. Every Homephone uses this model
 
 * **Restored and tested:** [Telefonmanufaktur](https://telefonmanufaktur.de/de/startseite/83-fetap-611-restauriert-designklassiker-in-verschiedenen-farbvarianten.html), €98 + €16.25 shipping. Skip their pulse-to-tone converter.
 * **Second-hand:** [Vinted](https://www.vinted.nl/catalog?search_text=fetap%20611) or [Marktplaats](https://www.marktplaats.nl/q/fetap+611/), €20–60. Ask the seller whether **the bell rings** and **both handset capsules** are present. Originals have "Deutsche Bundespost" underneath.
-* **A wall socket with screw terminals** for the phone's plug: the original Post socket (often sold with the phone), or a TAE-F surface socket (~€4, hardware store). Two of its terminals connect to the breadboard.
+* **A TAE wall socket with screw terminals** (*TAE-F* or *TAE-NFN Aufputzdose mit Schraubklemmen*, ~€4–6 at a hardware store, e.g. Hama). Its terminals 1 and 2 connect to the breadboard. Most second-hand FeTAp 611s have the flat TAE-F plug and fit it directly. If your phone has an **RJ11** cord instead (Telefonmanufaktur's do), add an *RJ11-Buchse auf TAE-F-Stecker* adapter (~€3) and plug it into the same socket. Avoid phones with the old wide pre-TAE plug.
 
 ### 2. The Pi
 
 * **Prototype: Raspberry Pi 3 Model B**, second-hand (~€25 on Marktplaats, often with SD card and case).
 * **Final: Raspberry Pi Zero 2 W with header.** Sold out across the EU until about Feb–Mar 2027. Then add a USB OTG cable ([DigiKey 1528-1585-ND](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1099/5875794)) and a 32–64 GB microSD card from a regular shop (not DigiKey: their SD cards cost €50).
 
-### 3. Everything else: one DigiKey order, ~€56 before VAT
+### 3. Everything else: one DigiKey order, ~€55 before VAT
 
 Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at checkout so duties are prepaid. Delivery is free from €75 before VAT. You can add the final Pi to the same order (`1, 2648-SC0721-ND`, €15.98, backordered to about March 2027); at checkout, ship in-stock items now and the Pi follows. Paste this into the cart's **Bulk Add** box:
 
@@ -65,7 +65,7 @@ Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at
 2, 399-4264-ND
 1, 399-9772-ND
 1, 399-C322C105K5R5TA7301CT-ND
-10, 1N4004GOS-ND
+1, DF04MDI-ND
 1, P6KE82ALFCT-ND
 1, 3362P-103LF-ND
 1, 1528-239-ND
@@ -84,8 +84,8 @@ Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at
 | 2 | 100 nF capacitor | One smooths the power; one passes the caller's voice from the AG1171 to the mic level knob |
 | 1 | 10 nF capacitor | Passes your voice from the Pi into the AG1171 |
 | 1 | 1 µF capacitor | Keeps the sound card's mic voltage away from the level knob |
-| 10 | 1N4004 diode | Protection on the phone wires (4 used; 10 cost less than 4) |
-| 1 | P6KE82A protection diode | Clamps any surge on the phone wires above 82 V |
+| 1 | DF04M bridge rectifier | Protection: four diodes in one chip that steer any surge on the phone wires into the clamp below |
+| 1 | P6KE82A protection diode | The clamp: absorbs anything on the phone wires above 82 V |
 | 1 | 10 kΩ trimmer | **The mic level knob**: how loud you sound to the other person. Set once with a screwdriver |
 | 1 | Breadboard | Everything pushes into it: no soldering |
 | 1 | **Pi T-Cobbler Plus** (assembled) | A ribbon cable that brings all 40 Pi pins onto the breadboard, **labelled** (5V, GND, GPIO17…) |
@@ -162,7 +162,7 @@ python3 scripts/linetest.py dial    # lift, dial 4 → "digit 4"
 
 1. **Find the terminals:** each 3.5 mm plug has three screw terminals. With the multimeter's beep mode, find which terminal connects to the plug's **tip** (the very end of the plug) and which to its **sleeve** (the long part nearest the body). The third (ring) stays empty.
 2. **Your voice to the phone (headphone):** screw a male-male jumper into plug 1's **tip** terminal and push its other end into **column 40, top half**. Put the **10 nF** between **column 40** and **column 42**. Jumper **column 42 → the pin 9 (VIN) column**. Jumper plug 1's **sleeve** terminal to the **top − rail**. Plug it into the sound card's **headphone** jack (green).
-3. **The caller's voice to the Pi (mic):** jumper the **pin 10 (VOUT) column → column 46, top half**. Put the **100 nF** between **column 46** and **column 48**. Push the **trimmer** into **columns 48, 49, 50**, middle leg in 49; bend the legs gently if needed. Jumper **column 50 → top − rail**. Put the **1 µF** between **column 49** and **column 53**. Jumper plug 2's **tip** terminal to **column 53** and its **sleeve** terminal to the **top − rail**. Plug it into the sound card's **mic** jack (pink).
+3. **The caller's voice to the Pi (mic):** jumper the **pin 10 (VOUT) column → column 46, top half**. Put the **100 nF** between **column 46** and **column 48**. Push the **trimmer** into **columns 48, 49, 50**, middle leg in 49. Jumper **column 50 → top − rail**. Put the **1 µF** between **column 49** and **column 53**. Jumper plug 2's **tip** terminal to **column 53** and its **sleeve** terminal to the **top − rail**. Plug it into the sound card's **mic** jack (pink).
 
 **Check, on the Pi:**
 
@@ -177,15 +177,12 @@ If your voice is too quiet or distorted, turn the **trimmer** a little with the 
 
 ### Step 5: protection
 
-Add this before regular use. It protects the AG1171 from static and spikes on the phone wires (datasheet Figure 4). **The stripe on a diode is its cathode.** Pick a free bottom-half column near the AG1171 and call it **column X**.
+Add this before regular use. It protects the AG1171 from static and spikes on the phone wires (datasheet Figure 4: a diode bridge and an 82 V clamp).
 
-| Part | Plain end → | Striped end → |
-|---|---|---|
-| 1N4004 | bottom − rail | pin 2 (TIP) column |
-| 1N4004 | bottom − rail | pin 1 (RING) column |
-| 1N4004 | pin 2 (TIP) column | column X |
-| 1N4004 | pin 1 (RING) column | column X |
-| P6KE82A | bottom − rail | column X |
+1. Push the **DF04M** across the middle channel at **columns 56 and 58**, like a chip: two legs in row e, two in row f. Its top is printed **~ ~ + −**: note which column each sign is in.
+2. Jumper one **~** column → the **pin 2 (TIP) column**, and the other **~** column → the **pin 1 (RING) column**. Either way round works.
+3. Jumper the **−** column → a **− rail**.
+4. **P6KE82A:** its **striped end** in the **+** column, the plain end in a **− rail**. The stripe matters.
 
 **Check:** the hook, ring, dial and audio tests above still work.
 

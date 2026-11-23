@@ -56,7 +56,7 @@ The [Silvertel AG1171](https://www.silvertel.com/telecom/271-ag1171.html) ([data
 
 * **Run it at 3.3V.** At 3.3V its logic matches the Pi's pins: inputs need ≥2.0V and SHK outputs 2.8V. At 5V, SHK outputs 4.5V, which would damage a Pi pin, and the Pi's 3.3V outputs are below its 3.5V input threshold.
 * **Give it its own 3.3V regulator.** It draws 70–105 mA idle, up to 450 mA with the handset lifted and up to 500 mA while ringing, at 3.3V. That's more than the Pi's 3.3V pin should supply, and the datasheet stresses a clean supply (absolute maximum 7V). Blue POT uses a separate 3.3V switching regulator with 470µF. Its builder also found the inrush current trips small fuses.
-* **Protection is not optional for regular use.** The datasheet's minimum circuit (Figure 4): two 1N4004s from **ground to tip and to ring** (stripe at the line), two 1N4004s from **tip and ring to a shared node** (stripe at the node), and an **82V clamp diode (P6KE82 or BZT03C82) from that node to ground** (stripe at the node). Silvertel: "the minimum overvoltage protection that should be used"; Blue POT: "Do not omit including the protection circuitry … as the AG1171 can be damaged." Optional: 1–10nF from tip and ring to ground against noise from the DC/DC converter (Figure 5). Never connect it to an outside phone line.
+* **Protection is not optional for regular use.** The datasheet's minimum circuit (Figure 4): a diode bridge ("D2–5 = 1N4004 or MB4S bridge") with its AC inputs on **tip and ring** and its − on **ground**, and an **82V clamp diode (P6KE82 or BZT03C82) from the bridge's + to ground** (stripe at +). We use a through-hole DF04M bridge (400V 1A, like the 1N4004s), which fits a breadboard. Silvertel: "the minimum overvoltage protection that should be used"; Blue POT: "Do not omit including the protection circuitry … as the AG1171 can be damaged." Optional: 1–10nF from tip and ring to ground against noise from the DC/DC converter (Figure 5). Never connect it to an outside phone line.
 * **Ringing:** set RM high, toggle F/R at 20–25 Hz in the ring cadence, then hold F/R high and drop RM. **RM may be high at most 33% of the time** (absolute maximum). The Dutch cadence of 1 s ringing, 4 s silence is 20%.
 * **Answering while ringing ("ring trip"):** SHK pulses when the handset is lifted mid-ring. Debounce it for 10 ms, then set F/R high, and drop RM between 10 and 500 ms later.
 * **Dialling:** rotary digits arrive as SHK pulses (about 10 per second). Debounce each edge for ~10 ms and count pulses until a ~200 ms gap. Push-button phones send tones, decoded from the VOUT audio in software.
@@ -77,10 +77,10 @@ Shops, DigiKey part numbers and the step-by-step breadboard wiring are in the [R
 | 100nF ceramic capacitors | 2 | Supply decoupling, VOUT coupling |
 | 10nF ceramic capacitor | 1 | VIN coupling |
 | 1µF ceramic capacitor | 1 | Mic coupling |
-| 1N4004 diodes | 4 | Protection bridge |
+| DF04M bridge rectifier (or 4 × 1N4004) | 1 | Protection bridge |
 | BZT03C82 or P6KE82 clamp diode | 1 | Protection, 82V |
 | 10k trimmer | 1 | Microphone level |
-| Wall socket with screw terminals (original Post socket or TAE-F) | 1 | Where the phone plugs in |
+| TAE-F or TAE-NFN surface socket with screw terminals (plus an RJ11-to-TAE-F adapter for RJ11 cords) | 1 | Where the phone plugs in |
 | Breadboard, Pi T-Cobbler Plus, male-male jumper wires, 2 × 3.5mm plugs with screw terminals (Adafruit 2790) | 1 | Prototype board: no soldering |
 
 Plus the Pi (a Pi 3 Model B for the prototype, a Zero 2 W for the final phone), its power supply and a USB sound card.
