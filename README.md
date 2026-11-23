@@ -35,7 +35,7 @@ The phone stays **completely original**. You build a tiny telephone exchange, a 
                                          reads hook & dial
 ```
 
-**No soldering.** Everything pushes into a breadboard. The Pi and line board fit in a box next to the phone (a cigar box works: at least 18 × 13 × 4.5 cm inside).
+**No soldering.** Everything pushes into a breadboard. The Pi and line board fit in a box next to the phone (a cigar box works: at least 18 × 13 × 4.5 cm inside). One power cord goes to the wall; the phone plugs into a TAE socket on the side of the box.
 
 ## What you need
 
@@ -47,7 +47,7 @@ The German Bundespost rotary phone of the 1970s. Every Homephone uses this model
 
 * **Restored and tested:** [Telefonmanufaktur](https://telefonmanufaktur.de/de/startseite/83-fetap-611-restauriert-designklassiker-in-verschiedenen-farbvarianten.html), €98 + €16.25 shipping. Skip their pulse-to-tone converter.
 * **Second-hand:** [Vinted](https://www.vinted.nl/catalog?search_text=fetap%20611) or [Marktplaats](https://www.marktplaats.nl/q/fetap+611/), €20–60. Ask the seller whether **the bell rings** and **both handset capsules** are present. Originals have "Deutsche Bundespost" underneath.
-* **A TAE wall socket with screw terminals** (*TAE-F* or *TAE-NFN Aufputzdose mit Schraubklemmen*, ~€4–6 at a hardware store, e.g. Hama). Its terminals 1 and 2 connect to the breadboard. Most second-hand FeTAp 611s have the flat TAE-F plug and fit it directly. If your phone has an **RJ11** cord instead (Telefonmanufaktur's do), add an *RJ11-Buchse auf TAE-F-Stecker* adapter (~€3) and plug it into the same socket. Avoid phones with the old wide pre-TAE plug.
+* **A TAE wall socket with screw terminals:** [Hama TAE-NFN Aufputz](https://www.bol.com/nl/nl/p/hama-tae-nfn-telefondose-aufputz-telefoonaansluitdoos-telefoon-opbouw-wit/9300000095326471/) (bol, ~€10). Screw it to the outside of the box and run two jumpers from its terminals **1 and 2** through a small hole to the breadboard. Most second-hand FeTAp 611s have the flat TAE-F plug and fit it directly. If your phone has an **RJ11** cord instead (Telefonmanufaktur's do), add a [TAE-F-stekker naar RJ11-bus adapter](https://www.bol.com/nl/nl/p/goobay-tae-telefoon-adapter-stekker/9200000024144263/). Avoid phones with the old wide pre-TAE plug.
 
 ### 2. The Pi
 
