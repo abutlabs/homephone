@@ -54,16 +54,16 @@ The German Bundespost rotary phone of the 1970s. Every Homephone uses this model
 * **Prototype: Raspberry Pi 3 Model B**, second-hand (~€25 on Marktplaats, often with SD card and case).
 * **Final: Raspberry Pi Zero 2 W with header.** Sold out across the EU until about Feb–Mar 2027. Then add a USB OTG cable ([DigiKey 1528-1585-ND](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1099/5875794)) and a 32–64 GB microSD card from a regular shop (not DigiKey: their SD cards cost €50).
 
-### 3. Everything else: one DigiKey order, ~€59 before VAT
+### 3. Everything else: one DigiKey order, ~€56 before VAT
 
-Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at checkout so duties are prepaid. Delivery is free from €75 before VAT; adding the final Pi (`1, 2648-SC0721-ND`, €15.98, backordered to about March 2027) gets you there. At checkout, ship in-stock items now; the Pi follows. Paste this into the cart's **Bulk Add** box:
+Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at checkout so duties are prepaid. Delivery is free from €75 before VAT. You can add the final Pi to the same order (`1, 2648-SC0721-ND`, €15.98, backordered to about March 2027); at checkout, ship in-stock items now and the Pi follows. Paste this into the cart's **Bulk Add** box:
 
 ```
 1, 5061-AG1171-ND
 1, 1951-2742-ND
 1, P14394-ND
 2, 399-4264-ND
-2, 399-9772-ND
+1, 399-9772-ND
 1, 399-C322C105K5R5TA7301CT-ND
 10, 1N4004GOS-ND
 1, P6KE82ALFCT-ND
@@ -73,8 +73,7 @@ Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at
 1, 1528-1424-ND
 1, 2648-SC0624-ND
 1, 1528-1475-ND
-2, 839-053-0282R-ND
-4, 2946-221-412-ND
+2, 1528-2866-ND
 ```
 
 | Qty | Part | What it does |
@@ -83,18 +82,17 @@ Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at
 | 1 | Traco TSR 1-2433 regulator | Turns the Pi's 5 V into the clean 3.3 V the AG1171 needs |
 | 1 | 470 µF capacitor | A small power reservoir for the bursts the AG1171 draws while ringing |
 | 2 | 100 nF capacitor | One smooths the power; one passes the caller's voice from the AG1171 to the mic level knob |
-| 2 | 10 nF capacitor | Passes your voice from the Pi into the AG1171 (the second is a spare) |
+| 1 | 10 nF capacitor | Passes your voice from the Pi into the AG1171 |
 | 1 | 1 µF capacitor | Keeps the sound card's mic voltage away from the level knob |
 | 10 | 1N4004 diode | Protection on the phone wires (4 used; 10 cost less than 4) |
 | 1 | P6KE82A protection diode | Clamps any surge on the phone wires above 82 V |
 | 1 | 10 kΩ trimmer | **The mic level knob**: how loud you sound to the other person. Set once with a screwdriver |
 | 1 | Breadboard | Everything pushes into it: no soldering |
 | 1 | **Pi T-Cobbler Plus** (assembled) | A ribbon cable that brings all 40 Pi pins onto the breadboard, **labelled** (5V, GND, GPIO17…) |
-| 1 | Jumper wires, male-male | Every link on the breadboard, plus the socket and WAGO ends |
+| 1 | Jumper wires, male-male | Every link on the breadboard, plus the wires to the socket and audio plugs |
 | 1 | Official Pi power supply (micro-USB) | Powers the Pi and the line board |
 | 1 | USB sound card | Gives the Pi an earpiece output and a microphone input |
-| 2 | 3.5 mm audio cable, bare end | Sound card to breadboard (strip the free end) |
-| 4 | WAGO 221-412 lever connector | Joins each stripped audio wire to a jumper wire |
+| 2 | 3.5 mm plug with screw terminals | Plugs into the sound card; a jumper wire screws into each terminal |
 
 ### 4. Tools
 
@@ -120,7 +118,7 @@ If a rail's red or blue line has a **gap in the middle** of the board, the two h
 
  Pi GPIO17 ◄── AG1171 pin 5 (SHK)     Pi GPIO27 ──► pin 4 (RM)     Pi GPIO22 ──► pin 3 (F/R)
 
- sound card HEADPHONE (tip) ──[10nF]──► AG1171 pin 9 (VIN)          cable sleeves ──► ground
+ sound card HEADPHONE (tip) ──[10nF]──► AG1171 pin 9 (VIN)          plug sleeves ──► ground
  sound card MIC (tip) ◄──[1µF]── trimmer middle  ┤ trimmer ├ one end ◄──[100nF]── AG1171 pin 10 (VOUT)
                                                            other end ──► ground
 
@@ -162,9 +160,9 @@ python3 scripts/linetest.py dial    # lift, dial 4 → "digit 4"
 
 ### Step 4: audio
 
-1. **Strip the cables:** cut back the outer jacket of each 3.5 mm cable's free end by 3 cm. Inside are a **tip** wire, a **ring** wire and a **shield (sleeve)**. With the multimeter's beep mode, find which wire connects to the plug's **tip** (the very end of the plug). Strip 1 cm of the tip wire and the shield, and **twist and fold each one double** so the WAGO grips firmly. Tape the unused ring wire out of the way.
-2. **Your voice to the phone (headphone):** plug cable 1 into the sound card's **headphone** jack (green). **WAGO** its tip wire to a male-male jumper into **column 40, top half**. Put the **10 nF** between **column 40** and **column 42**. Jumper **column 42 → the pin 9 (VIN) column**. **WAGO** the shield to a jumper into the **top − rail**.
-3. **The caller's voice to the Pi (mic):** jumper the **pin 10 (VOUT) column → column 46, top half**. Put the **100 nF** between **column 46** and **column 48**. Push the **trimmer** into **columns 48, 49, 50**, middle leg in 49; bend the legs gently if needed. Jumper **column 50 → top − rail**. Put the **1 µF** between **column 49** and **column 53**. Plug cable 2 into the **mic** jack (pink): **WAGO** its tip wire to a jumper into **column 53**, and its shield to a jumper into the **top − rail**.
+1. **Find the terminals:** each 3.5 mm plug has three screw terminals. With the multimeter's beep mode, find which terminal connects to the plug's **tip** (the very end of the plug) and which to its **sleeve** (the long part nearest the body). The third (ring) stays empty.
+2. **Your voice to the phone (headphone):** screw a male-male jumper into plug 1's **tip** terminal and push its other end into **column 40, top half**. Put the **10 nF** between **column 40** and **column 42**. Jumper **column 42 → the pin 9 (VIN) column**. Jumper plug 1's **sleeve** terminal to the **top − rail**. Plug it into the sound card's **headphone** jack (green).
+3. **The caller's voice to the Pi (mic):** jumper the **pin 10 (VOUT) column → column 46, top half**. Put the **100 nF** between **column 46** and **column 48**. Push the **trimmer** into **columns 48, 49, 50**, middle leg in 49; bend the legs gently if needed. Jumper **column 50 → top − rail**. Put the **1 µF** between **column 49** and **column 53**. Jumper plug 2's **tip** terminal to **column 53** and its **sleeve** terminal to the **top − rail**. Plug it into the sound card's **mic** jack (pink).
 
 **Check, on the Pi:**
 
