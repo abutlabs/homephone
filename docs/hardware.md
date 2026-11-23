@@ -76,12 +76,12 @@ Shops, DigiKey part numbers and the step-by-step breadboard wiring are in the [R
 | 470µF 16V electrolytic capacitor | 1 | On the AG1171 supply |
 | 100nF ceramic capacitors | 2 | Supply decoupling, VOUT coupling |
 | 10nF ceramic capacitors | 2 | VIN coupling (one spare, or tip/ring noise filter) |
-| 1µF ceramic capacitors | 2 | Mic coupling (one spare) |
+| 1µF ceramic capacitor | 1 | Mic coupling |
 | 1N4004 diodes | 4 | Protection bridge |
 | BZT03C82 or P6KE82 clamp diode | 1 | Protection, 82V |
 | 10k trimmer | 1 | Microphone level |
 | Wall socket with screw terminals (original Post socket or TAE-F) | 1 | Where the phone plugs in |
-| Breadboard, jumper wires, 2 × 3.5mm cables with bare ends, WAGO 221-412 | 1 | Prototype board: no soldering |
+| Breadboard, Pi T-Cobbler Plus, male-male jumper wires, 2 × 3.5mm cables with bare ends, WAGO 221-412 | 1 | Prototype board: no soldering |
 
 Plus the Pi (a Pi 3 Model B for the prototype, a Zero 2 W for the final phone), its power supply and a USB sound card.
 

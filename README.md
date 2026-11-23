@@ -54,9 +54,9 @@ The German Bundespost rotary phone of the 1970s. Every Homephone uses this model
 * **Prototype: Raspberry Pi 3 Model B**, second-hand (~€25 on Marktplaats, often with SD card and case).
 * **Final: Raspberry Pi Zero 2 W with header.** Sold out across the EU until about Feb–Mar 2027. Then add a USB OTG cable ([DigiKey 1528-1585-ND](https://www.digikey.nl/en/products/detail/adafruit-industries-llc/1099/5875794)) and a 32–64 GB microSD card from a regular shop (not DigiKey: their SD cards cost €50).
 
-### 3. Everything else: one DigiKey order, ~€68 before VAT
+### 3. Everything else: one DigiKey order, ~€59 before VAT
 
-Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at checkout so duties are prepaid. Delivery is free over €75 before VAT; adding the final Pi (`1, 2648-SC0721-ND`, backordered to about March 2027) gets you there. Paste this into the cart's **Bulk Add** box:
+Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at checkout so duties are prepaid. Delivery is free from €75 before VAT; adding the final Pi (`1, 2648-SC0721-ND`, €15.98, backordered to about March 2027) gets you there. At checkout, ship in-stock items now; the Pi follows. Paste this into the cart's **Bulk Add** box:
 
 ```
 1, 5061-AG1171-ND
@@ -64,12 +64,11 @@ Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at
 1, P14394-ND
 2, 399-4264-ND
 2, 399-9772-ND
-2, 399-C322C105K5R5TA7301CT-ND
+1, 399-C322C105K5R5TA7301CT-ND
 10, 1N4004GOS-ND
 1, P6KE82ALFCT-ND
 1, 3362P-103LF-ND
 1, 1528-239-ND
-1, 1528-1160-ND
 1, 1528-1154-ND
 1, 1528-1424-ND
 1, 2648-SC0624-ND
@@ -84,14 +83,14 @@ Order at **[DigiKey NL](https://www.digikey.nl)** and choose **UPS or FedEx** at
 | 1 | Traco TSR 1-2433 regulator | Turns the Pi's 5 V into the clean 3.3 V the AG1171 needs |
 | 1 | 470 µF capacitor | A small power reservoir for the bursts the AG1171 draws while ringing |
 | 2 | 100 nF capacitor | One smooths the power; one passes the caller's voice from the AG1171 to the mic level knob |
-| 2 | 10 nF capacitor | One passes your voice from the Pi into the AG1171 (the other is a spare) |
-| 2 | 1 µF capacitor | Keeps the sound card's mic voltage away from the level knob (the other is a spare) |
+| 2 | 10 nF capacitor | Passes your voice from the Pi into the AG1171 (the second is a spare) |
+| 1 | 1 µF capacitor | Keeps the sound card's mic voltage away from the level knob |
 | 10 | 1N4004 diode | Protection on the phone wires (4 used; 10 cost less than 4) |
 | 1 | P6KE82A protection diode | Clamps any surge on the phone wires above 82 V |
 | 1 | 10 kΩ trimmer | **The mic level knob**: how loud you sound to the other person. Set once with a screwdriver |
 | 1 | Breadboard | Everything pushes into it: no soldering |
 | 1 | **Pi T-Cobbler Plus** (assembled) | A ribbon cable that brings all 40 Pi pins onto the breadboard, **labelled** (5V, GND, GPIO17…) |
-| 1 + 1 | Jumper wires (male-male, female-male) | Links on the breadboard (the female-male ones are spares) |
+| 1 | Jumper wires, male-male | Every link on the breadboard, plus the socket and WAGO ends |
 | 1 | Official Pi power supply (micro-USB) | Powers the Pi and the line board |
 | 1 | USB sound card | Gives the Pi an earpiece output and a microphone input |
 | 2 | 3.5 mm audio cable, bare end | Sound card to breadboard (strip the free end) |
